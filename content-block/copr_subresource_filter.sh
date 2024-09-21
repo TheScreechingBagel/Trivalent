@@ -19,14 +19,15 @@ gn gen out/Release
 
 # Build the filter generation tool
 ninja -C out/Release/ subresource_filter_tools
+cd ../../ # get back to the main directory from ./chromium/src/
 
 # Generate the filterlist
 ./chromium/src/out/Release/ruleset_converter --input_format=filter-list --output_format=unindexed-ruleset --input_files=$LISTS --output_file=hardened-chromium_blocklist
 
 # Cleanup
-rm easylist.txt,easyprivacy.txt
+rm easylist.txt easyprivacy.txt
 rm -rf ./chromium ./depot_tools
 
 # Get the spec to package
-##wget https://raw.githubusercontent.com/secureblue/hardened-chromium/refs/heads/master/chromium-subresource_filter.spec
-wget https://raw.githubusercontent.com/RKNF404/hardened-chromium/refs/heads/adblock-1/chromium-subresource_filter.spec # test url, the above will be used in prod
+##wget https://raw.githubusercontent.com/secureblue/hardened-chromium/refs/heads/master/content-block/chromium-subresource_filter.spec
+wget https://raw.githubusercontent.com/RKNF404/hardened-chromium/refs/heads/adblock-1/content-block/chromium-subresource_filter.spec # test url, the above will be used in prod
