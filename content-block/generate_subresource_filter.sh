@@ -27,7 +27,3 @@ cd ../../ # get back to the main directory from ./chromium/src/
 # Cleanup
 rm easylist.txt easyprivacy.txt
 rm -rf ./chromium ./depot_tools
-
-# Get the spec to package
-#wget https://raw.githubusercontent.com/secureblue/hardened-chromium/refs/heads/master/content-block/chromium-subresource_filter.spec
-wget https://raw.githubusercontent.com/RKNF404/hardened-chromium/refs/heads/adblock-1/content-block/chromium-subresource_filter.spec # test url, the above will be used in prod
