@@ -1,7 +1,7 @@
 Name:	 hardened-chromium-subresource_filter
 Version: 1
 #%{lua: print("Release: "..os.date("!%Y.%m.%d-%H.%M.%S").."\n"}
-%{lua: print("Release: "..os.time().."\n"}
+%{lua: print("Release: "..os.time().."\n")}
 #Release: %autorelease
 Summary: Filters used by hardened-chromium to provide adblocking.
 License: GPL-2.0
