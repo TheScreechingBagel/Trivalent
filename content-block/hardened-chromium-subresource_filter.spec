@@ -1,6 +1,7 @@
 Name:	  hardened-chromium-subresource_filter
 License:  GPL-2.0
 Requires: hardened-chromium
+Summary:  Subresource filter for hardened-chromium
 Version:  1.0
 # Automatically generated version number, so that it doesn't need to be incremented manually
 %{lua: print("Release: "..os.time().."\n")}
