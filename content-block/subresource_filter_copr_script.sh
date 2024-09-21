@@ -6,7 +6,7 @@ wget https://raw.githubusercontent.com/RKNF404/hardened-chromium/refs/heads/adbl
 
 # Get the generation script
 #wget https://raw.githubusercontent.com/secureblue/hardened-chromium/refs/heads/master/content-block/generate_subresource_filter.sh
-wget https://raw.githubusercontent.com/RKNF404/hardened-chromium/refs/heads/adblock-1/generate_subresource_filter.sh # again, temporary for testing
+wget https://raw.githubusercontent.com/RKNF404/hardened-chromium/refs/heads/adblock-1/content-block/generate_subresource_filter.sh # again, temporary for testing
 
 # Run said script
 chmod u+x generate_subresource_filter.sh && ./generate_subresource_filter.sh
