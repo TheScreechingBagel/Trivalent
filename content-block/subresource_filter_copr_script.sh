@@ -10,7 +10,7 @@ readonly GIT_URL="https://raw.githubusercontent.com/RKNF404/hardened-chromium/re
 readonly SPEC_CHECKSUM="$SPEC_FILE" # dummy value for testing, an actual hash will be used here
 readonly SCRIPT_CHECKSUM="$SCRIPT_FILE" # dummy value, generation script should be modifiable for now, later on it doesn't need to be though
 
-# Get download a file from whatever source and, given a checksum, validate it
+# Get a file from whatever source and, given a checksum, validate it
 download_and_verify() {
 	FAILED_COUNT=0
 	while [ "$FAILED_COUNT" != 4 ]; do

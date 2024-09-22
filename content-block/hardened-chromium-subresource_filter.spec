@@ -10,7 +10,7 @@ Version:  1.0
 Filters used by hardened-chromium to provide adblocking.
 
 %install
-install -m 0644 hardened-chromium_blocklist %{buildroot}%{_sysconfdir}/chromium/hardened-chromium_blocklist
+install -m 0644 %{_sourcedir}/hardened-chromium_blocklist %{buildroot}%{_sysconfdir}/chromium/hardened-chromium_blocklist
 
 %files
 %{_sysconfdir}/chromium/hardened-chromium_blocklist
