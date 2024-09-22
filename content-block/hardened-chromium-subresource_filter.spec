@@ -15,7 +15,7 @@ Filters used by hardened-chromium to provide adblocking.
 %install
 pwd
 ls -l
-la -l %{_sourcedir}
+ls -l %{_sourcedir}
 install -m 0644 %{_sourcedir}/%{SOURCE0} %{buildroot}%{_sysconfdir}/chromium/hardened-chromium_blocklist
 
 %files
