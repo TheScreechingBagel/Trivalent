@@ -13,7 +13,7 @@ readonly SCRIPT_CHECKSUM="$SCRIPT_FILE" # dummy value, generation script should 
 # Get a file from whatever source and, given a checksum, validate it
 download_and_verify() {
 	FAILED_COUNT=0
-	while [ "$FAILED_COUNT" != 4 ]; do
+	while [ "$FAILED_COUNT" -lt $((4)) ]; do
 		wget $2
 		sha384sum $1 | grep -w $3
 		if [ "$?" == 1 ]; then
