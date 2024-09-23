@@ -8,7 +8,6 @@ Version:   1.0
 # Automatically generated version number, so that it doesn't need to be incremented manually
 %{lua: print("Release: "..os.time().."\n")}
 
-
 %description
 Filters used by hardened-chromium to provide adblocking.
 
