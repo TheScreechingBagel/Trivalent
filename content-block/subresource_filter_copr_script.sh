@@ -44,8 +44,8 @@ for source in $LIST_SOURCES; do
 	wget $source
 done
 
-# Cleanup
-rm ruleset_converter easylist.txt easyprivacy.txt
-
 # Run the converter file to generate the filterlist
 chmod u+x $CONVERTER_FILE && ./$CONVERTER_FILE --input_format=filter-list --output_format=unindexed-ruleset --input_files=$LISTS --output_file=hardened-chromium_blocklist
+
+# Cleanup
+rm easylist.txt easyprivacy.txt
