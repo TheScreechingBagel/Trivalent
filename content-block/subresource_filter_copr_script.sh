@@ -7,7 +7,7 @@ readonly CONVERTER_FILE="rule_converter"
 readonly GIT_URL="https://raw.githubusercontent.com/RKNF404/hardened-chromium/refs/heads/adblock-1/content-block" # test url, the above will be used in prod
 
 # Checksums use SHA384
-readonly SPEC_CHECKSUM="b2d6c4021666f7aef6992716a2e50edd76e0ec3d202c9b97c4cf45214162b105ef7a9f9fa20e34b8d1829d95de2fbe45"
+readonly SPEC_CHECKSUM="ea2102968648d90be129676ee7b594f5074ff39c2ca2eb00547f728f16a7afbc11257994d17f0131067a2ee75a8d0aed"
 readonly CONVERTER_CHECKSUM="22ae277be977f8539e822526c7d8c278b65d7759abd72c530165839640a24f873d3745fd5b9e83baf37261963a594e12"
 
 LISTS="easylist.txt,easyprivacy.txt"
@@ -47,5 +47,5 @@ done
 # Run the converter file to generate the filterlist
 chmod u+x $CONVERTER_FILE && ./$CONVERTER_FILE --input_format=filter-list --output_format=unindexed-ruleset --input_files=$LISTS --output_file=hardened-chromium_blocklist
 
-# Cleanup
+# Cleanup (only needed for a local, non-copr, run)
 rm easylist.txt easyprivacy.txt

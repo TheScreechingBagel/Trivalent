@@ -15,6 +15,7 @@ cd ../../
 
 # Copy the result
 cp ./chromium/src/out/Release/ruleset_converter .
+sha384sum ruleset_converter
 
 # Cleanup
 rm -rf ./chromium ./depot_tools
