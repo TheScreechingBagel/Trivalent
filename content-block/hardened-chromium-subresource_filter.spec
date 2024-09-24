@@ -12,21 +12,20 @@ Version:   1.0
 Filters used by hardened-chromium to provide adblocking.
 
 %install
-mkdir -p "%{buildroot}%{_sysconfdir}/chromium"
-install -m 0644 %{SOURCE0} "%{buildroot}%{_sysconfdir}/chromium/hardened-chromium_blocklist"
-
-%preun
-if [ -d "%{getenv:HOME}/.config/chromium/Subresource Filter" ]; then
-	rm -rf "%{getenv:HOME}/.config/chromium/Subresource Filter"
-fi
-
-%posttrans
-OLD_DIR="%{getenv:HOME}/.config/chromium/Subresource Filter"
+INSTALL_DIR="%{buildroot}%{_sysconfdir}/chromium"
+mkdir -p "$INSTALL_DIR"
+install -m 0644 %{SOURCE0} "$INSTALL_DIR/hardened-chromium_blocklist"
+OLD_DIR="$HOME/.config/chromium/Subresource Filter"
+echo "Checking for '$OLD_DIR'"
 if [ -d "$OLD_DIR" ]; then
+	echo "Removing '$OLD_DIR'"
 	rm -rf "$OLD_DIR"
 	NEW_DIR="$OLD_DIR/Unindexed Rules/%{release}.%{version}"
+	echo "Creating '$NEW_DIR'"
 	mkdir -p "$NEW_DIR"
-	cp "%{buildroot}%{_sysconfdir}/chromium/hardened-chromium_blocklist" "$NEW_DIR/Filtering Rules"
+	echo "Adding filter list from '$INSTALL_DIR'"
+	cp "$INSTALL_DIR/hardened-chromium_blocklist" "$NEW_DIR/Filtering Rules"
+	echo "Creating 'manifest.json'"
 	cat << EOF > "$NEW_DIR/manifest.json"
 {
   "manifest_version": 2,
@@ -36,6 +35,16 @@ if [ -d "$OLD_DIR" ]; then
 }
 EOF
 fi
+echo "Done"
+
+%preun
+echo "Checking for '$HOME/.config/chromium/Subresource Filter'"
+if [ -d "$HOME/.config/chromium/Subresource Filter" && $1 -lt 2]; then
+	echo "Clearing: '$HOME/.config/chromium/Subresource Filter'"
+	rm -rf "$HOME/.config/chromium/Subresource Filter"
+fi
+
+%posttrans
 
 %files
 %{_sysconfdir}/chromium/hardened-chromium_blocklist
