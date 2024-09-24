@@ -1,4 +1,4 @@
-#! //bash -x
+#! /usr/bash -x
 
 # Preset variables
 readonly SPEC_FILE="hardened-chromium-subresource_filter.spec"
