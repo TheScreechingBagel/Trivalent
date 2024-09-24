@@ -7,7 +7,7 @@ readonly CONVERTER_FILE="ruleset_converter"
 readonly GIT_URL="https://raw.githubusercontent.com/RKNF404/hardened-chromium/refs/heads/adblock-1/content-block" # test url, the above will be used in prod
 
 # Checksums use SHA384
-readonly SPEC_CHECKSUM="db8468aac72445ccac2d0d3b21a569b9466179ff3346aa2a16e696d2c5caabb5f680c129e2992a486271ff9521cd36ad"
+readonly SPEC_CHECKSUM="a8fdb23b7e98074149c3fa0f36726f6d944050b81596d90fb11ac8442c7af27083b28946dbd196663345a361eda47df0"
 readonly CONVERTER_CHECKSUM="2002a2329b5b0f71f79910ef5c2af76196aa190d186a8d513a15e2712474af6f47991d7d69a96b3f708d86f13df4ea4d"
 
 LISTS="easylist.txt,easyprivacy.txt"

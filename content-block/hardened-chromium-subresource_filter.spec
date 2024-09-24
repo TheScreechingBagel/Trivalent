@@ -15,7 +15,7 @@ Filters used by hardened-chromium to provide adblocking.
 mkdir -p "%{buildroot}%{_sysconfdir}/chromium"
 install -m 0644 %{SOURCE0} "%{buildroot}%{_sysconfdir}/chromium/hardened-chromium_blocklist"
 
-%uninstall
+%preun
 if [ -d "%{getenv:HOME}/.config/chromium/Subresource Filter" ]; then
 	rm -rf "%{getenv:HOME}/.config/chromium/Subresource Filter"
 fi
