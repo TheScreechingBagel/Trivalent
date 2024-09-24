@@ -15,18 +15,24 @@ Filters used by hardened-chromium to provide adblocking.
 INSTALL_DIR="%{buildroot}%{_sysconfdir}/chromium"
 mkdir -p "$INSTALL_DIR"
 install -m 0644 %{SOURCE0} "$INSTALL_DIR/hardened-chromium_blocklist"
-OLD_DIR="$HOME/.config/chromium/Subresource Filter"
-echo "Checking for '$OLD_DIR'"
-if [ -d "$OLD_DIR" ]; then
-	echo "Removing '$OLD_DIR'"
-	rm -rf "$OLD_DIR"
-	NEW_DIR="$OLD_DIR/Unindexed Rules/%{release}.%{version}"
-	echo "Creating '$NEW_DIR'"
-	mkdir -p "$NEW_DIR"
-	echo "Adding filter list from '$INSTALL_DIR'"
-	cp "$INSTALL_DIR/hardened-chromium_blocklist" "$NEW_DIR/Filtering Rules"
-	echo "Creating 'manifest.json'"
-	cat << EOF > "$NEW_DIR/manifest.json"
+
+%post
+if [ -d "/home/" ]; then
+	cd /home && USERS=*
+	INSTALL_DIR="%{_sysconfdir}/chromium"
+	for USER in $USERS; do
+		OLD_DIR="/home/$USER/.config/chromium/Subresource Filter"
+		echo "Checking for '$OLD_DIR'"
+		if [ -d "$OLD_DIR" ]; then
+			echo "Removing '$OLD_DIR'"
+			rm -r "$OLD_DIR"
+			NEW_DIR="$OLD_DIR/Unindexed Rules/%{release}.%{version}"
+			echo "Creating '$NEW_DIR'"
+			mkdir -p "$NEW_DIR"
+			echo "Adding filter list from '$INSTALL_DIR'"
+			cp "$INSTALL_DIR/hardened-chromium_blocklist" "$NEW_DIR/Filtering Rules"
+			echo "Creating 'manifest.json'"
+			cat << EOF > "$NEW_DIR/manifest.json"
 {
   "manifest_version": 2,
   "name": "Subresource Filtering Rules",
@@ -34,17 +40,24 @@ if [ -d "$OLD_DIR" ]; then
   "version": "%{release}.%{version}"
 }
 EOF
+			chown -R $USER "$OLD_DIR"
+		fi
+	done
 fi
 echo "Done"
 
 %preun
-echo "Checking for '$HOME/.config/chromium/Subresource Filter'"
-if [ -d "$HOME/.config/chromium/Subresource Filter" && $1 -lt 2]; then
-	echo "Clearing: '$HOME/.config/chromium/Subresource Filter'"
-	rm -rf "$HOME/.config/chromium/Subresource Filter"
+if [ -d "/home/" ]; then
+	cd /home && USERS=*
+	for USER in $USERS; do
+		DIR="/home/$USER/.config/chromium/Subresource Filter"
+		echo "Checking for '$DIR'"
+		if [ -d "$DIR" ] && [ $1 -lt 2 ]; then
+			echo "Clearing: '$DIR'"
+			rm -rf "$DIR"
+		fi
+	done
 fi
-
-%posttrans
 
 %files
 %{_sysconfdir}/chromium/hardened-chromium_blocklist
