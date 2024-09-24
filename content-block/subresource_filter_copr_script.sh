@@ -4,7 +4,7 @@
 readonly SPEC_FILE="hardened-chromium-subresource_filter.spec"
 readonly CONVERTER_FILE="rule_converter"
 #readonly GIT_URL="https://raw.githubusercontent.com/secureblue/hardened-chromium/refs/heads/master/content-block"
-readonly GIT_URL="https://raw.githubusercontent.com/RKNF404/hardened-chromium/refs/heads/adblock-1/content-block" # test url, the above will be used in prod
+readonly GIT_URL="https://github.com/RKNF404/hardened-chromium/raw/refs/heads/adblock-1/content-block" # test url, the above will be used in prod
 
 # Checksums use SHA384
 readonly SPEC_CHECKSUM="ea2102968648d90be129676ee7b594f5074ff39c2ca2eb00547f728f16a7afbc11257994d17f0131067a2ee75a8d0aed"
