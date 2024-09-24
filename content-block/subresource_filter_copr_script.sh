@@ -8,7 +8,7 @@ readonly GIT_URL="https://raw.githubusercontent.com/RKNF404/hardened-chromium/re
 
 # Checksums use SHA384
 readonly SPEC_CHECKSUM="ea2102968648d90be129676ee7b594f5074ff39c2ca2eb00547f728f16a7afbc11257994d17f0131067a2ee75a8d0aed"
-readonly CONVERTER_CHECKSUM="22ae277be977f8539e822526c7d8c278b65d7759abd72c530165839640a24f873d3745fd5b9e83baf37261963a594e12"
+readonly CONVERTER_CHECKSUM="2002a2329b5b0f71f79910ef5c2af76196aa190d186a8d513a15e2712474af6f47991d7d69a96b3f708d86f13df4ea4d"
 
 LISTS="easylist.txt,easyprivacy.txt"
 LIST_SOURCES="https://easylist.to/easylist/easylist.txt https://easylist.to/easylist/easyprivacy.txt"
