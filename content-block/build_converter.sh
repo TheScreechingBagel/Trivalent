@@ -11,11 +11,13 @@ gn gen out/Release
 
 # Build the filter generation tool
 ninja -C out/Release/ subresource_filter_tools
-cd ../../
 
-# Copy the result
-cp ./chromium/src/out/Release/ruleset_converter .
-sha384sum ruleset_converter
+# Compress the converter and needed libs
+cd out/Release
+tar cJvf ruleset_converter.tar.xz *.so ruleset_converter
+sha384sum ruleset_converter.tar.xz
+cp ruleset_converter.tar.xz ../../../../
 
 # Cleanup
+cd ../../../../
 rm -rf ./chromium ./depot_tools

@@ -37,7 +37,7 @@ download_and_verify() {
 }
 
 download_and_verify $SPEC_FILE $GIT_URL/$SPEC_FILE $SPEC_CHECKSUM
-download_and_verify $CONVERTER_FILE $GIT_URL/$CONVERTER_FILE $CONVERTER_CHECKSUM
+download_and_verify $CONVERTER_FILE.tar.xz $GIT_URL/$CONVERTER_FILE.tar.xz $CONVERTER_CHECKSUM
 
 # Get the filters that will be added
 for source in $LIST_SOURCES; do
@@ -45,7 +45,8 @@ for source in $LIST_SOURCES; do
 done
 
 # Run the converter file to generate the filterlist
-chmod u+x $CONVERTER_FILE && ./$CONVERTER_FILE --input_format=filter-list --output_format=unindexed-ruleset --input_files=$LISTS --output_file=hardened-chromium_blocklist
+tar xvf $CONVERTER_FILE.tar.xz
+chmod u+x $CONVERTER_FILE/$CONVERTER_FILE && ./$CONVERTER_FILE/$CONVERTER_FILE --input_format=filter-list --output_format=unindexed-ruleset --input_files=$LISTS --output_file=hardened-chromium_blocklist
 
 # Cleanup (only needed for a local, non-copr, run)
 rm easylist.txt easyprivacy.txt
