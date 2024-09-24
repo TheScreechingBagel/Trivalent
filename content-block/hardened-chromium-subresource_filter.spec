@@ -12,15 +12,21 @@ Version:   1.0
 Filters used by hardened-chromium to provide adblocking.
 
 %install
-INSTALL_DIR="%{buildroot}%{_sysconfdir}/chromium"
-mkdir -p "$INSTALL_DIR"
-install -m 0644 %{SOURCE0} "$INSTALL_DIR/hardened-chromium_blocklist"
+mkdir -p "%{buildroot}%{_sysconfdir}/chromium"
+install -m 0644 %{SOURCE0} "%{buildroot}%{_sysconfdir}/chromium/hardened-chromium_blocklist"
+
+%uninstall
+if [ -d "%{getenv:HOME}/.config/chromium/Subresource Filter" ]; then
+	rm -rf "%{getenv:HOME}/.config/chromium/Subresource Filter"
+fi
+
+%posttrans
 OLD_DIR="%{getenv:HOME}/.config/chromium/Subresource Filter"
 if [ -d "$OLD_DIR" ]; then
 	rm -rf "$OLD_DIR"
 	NEW_DIR="$OLD_DIR/Unindexed Rules/%{release}.%{version}"
 	mkdir -p "$NEW_DIR"
-	cp "$INSTALL_DIR/hardened-chromium_blocklist" "$NEW_DIR/Filtering Rules"
+	cp "%{buildroot}%{_sysconfdir}/chromium/hardened-chromium_blocklist" "$NEW_DIR/Filtering Rules"
 	cat << EOF > "$NEW_DIR/manifest.json"
 {
   "manifest_version": 2,
