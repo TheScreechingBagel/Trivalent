@@ -21,12 +21,14 @@ if [ -d "/home/" ]; then
 	cd /home && USERS=*
 	INSTALL_DIR="%{_sysconfdir}/chromium"
 	for USER in $USERS; do
-		OLD_DIR="/home/$USER/.config/chromium/Subresource Filter"
+		OLD_DIR="/home/$USER/.config/chromium"
 		echo "Checking for '$OLD_DIR'"
 		if [ -d "$OLD_DIR" ]; then
-			echo "Removing '$OLD_DIR'"
-			rm -r "$OLD_DIR"
-			NEW_DIR="$OLD_DIR/Unindexed Rules/%{release}.%{version}"
+			if [ -d "$OLD_DIR/Subresource Filter" ]; then
+				echo "Removing '$OLD_DIR/Subresource Filter'"
+				rm -r "$OLD_DIR/Subresource Filter"
+			fi
+			NEW_DIR="$OLD_DIR/Subresource Filter/Unindexed Rules/%{release}.%{version}"
 			echo "Creating '$NEW_DIR'"
 			mkdir -p "$NEW_DIR"
 			echo "Adding filter list from '$INSTALL_DIR'"
