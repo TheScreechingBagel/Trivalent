@@ -8,7 +8,7 @@ readonly GIT_URL="https://raw.githubusercontent.com/RKNF404/hardened-chromium/re
 
 # Checksums use SHA384
 readonly SPEC_CHECKSUM="36c9d0d637e68423c1371a4fd5541851a14c7315082c19a8e08f11af8f98ecd415a6293548b1ae43b3bb9a56212ad453"
-readonly CONVERTER_CHECKSUM="2002a2329b5b0f71f79910ef5c2af76196aa190d186a8d513a15e2712474af6f47991d7d69a96b3f708d86f13df4ea4d"
+readonly CONVERTER_CHECKSUM="28e225e884b2e657962ddb1b8900c41782e21a5c6208c30f75617d83bdaabc7027f0eaf3be873aa99d5a794d62c72d30"
 
 LISTS="easylist.txt,easyprivacy.txt"
 LIST_SOURCES="https://easylist.to/easylist/easylist.txt https://easylist.to/easylist/easyprivacy.txt"
@@ -46,7 +46,7 @@ done
 
 # Run the converter file to generate the filterlist
 tar xvf $CONVERTER_FILE.tar.xz
-chmod u+x $CONVERTER_FILE/$CONVERTER_FILE && ./$CONVERTER_FILE/$CONVERTER_FILE --input_format=filter-list --output_format=unindexed-ruleset --input_files=$LISTS --output_file=hardened-chromium_blocklist
+./$CONVERTER_FILE/$CONVERTER_FILE --input_format=filter-list --output_format=unindexed-ruleset --input_files=$LISTS --output_file=hardened-chromium_blocklist
 
 # Cleanup (only needed for a local, non-copr, run)
 rm easylist.txt easyprivacy.txt

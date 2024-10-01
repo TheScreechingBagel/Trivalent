@@ -22,4 +22,4 @@ cd ../../../../
 rm -rf ./chromium ./depot_tools
 
 # Print hash to update in the copr script
-sha384sum ruleset_converter.tar.xz
+./get_checksums.sh
