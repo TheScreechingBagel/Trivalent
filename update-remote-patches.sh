@@ -108,7 +108,7 @@ update_fedora_patches() {
 	removed_counter=0
 	patch_not_found_counter=0
 	for ((i=0; i<${#current_fedora_patches[@]}; i++)); do
-   		if (i<${#current_fedora_arm_patches[@]}); then
+   		if (i<=${#current_fedora_arm_patches[@]}); then
      			k=$i
 		else
   			k=-1
