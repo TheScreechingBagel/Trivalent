@@ -361,7 +361,7 @@ ln -sf %{_bindir}/esbuild third_party/devtools-frontend/src/third_party/esbuild/
 rm -rf buildtools/third_party/eu-strip/bin/eu-strip
 
 # Replace it with a symlink to the Fedora copy
-ln -s $(which eu-strip) buildtools/third_party/eu-strip/bin/eu-strip
+ln -s %{_bindir}/eu-strip buildtools/third_party/eu-strip/bin/eu-strip
 
 # Hard code extra version
 sed -i 's/getenv("CHROME_VERSION_EXTRA")/"%{chromium_name}"/' chrome/common/channel_info_posix.cc
@@ -398,10 +398,6 @@ export RUSTC_BOOTSTRAP=1
 
 # set rustc version
 rustc_version="$(rustc --version)"
-# set rust bindgen root
-rust_bindgen_root="$(which bindgen | sed 's#/bin/.*##')"
-rust_sysroot_absolute="$(rustc --print sysroot)"
-
 # set clang version
 clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
 clang_base_path="$(clang --version | grep InstalledDir | cut -d' ' -f2 | sed 's#/bin##')"
@@ -427,7 +423,7 @@ CHROMIUM_GN_DEFINES+=" clang_version=\"$clang_version\""
 CHROMIUM_GN_DEFINES+=' clang_use_chrome_plugins=false'
 CHROMIUM_GN_DEFINES+=' use_lld=true'
 CHROMIUM_GN_DEFINES+=' rust_sysroot_absolute="%{_prefix}"'
-CHROMIUM_GN_DEFINES+=" rust_bindgen_root=\"$rust_bindgen_root\""
+CHROMIUM_GN_DEFINES+=' rust_bindgen_root="%{_prefix}"'
 CHROMIUM_GN_DEFINES+=" rustc_version=\"$rustc_version\""
 CHROMIUM_GN_DEFINES+=' use_sysroot=false'
 CHROMIUM_GN_DEFINES+=' icu_use_data_file=true'
