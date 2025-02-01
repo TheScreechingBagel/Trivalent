@@ -9,7 +9,6 @@ truncated_vanadium_patches=()
 remote_vanadium_patches=()
 truncated_remote_vanadium_patches=()
 
-readonly fedora_patches_path="./fedora_patches/"
 readonly fedora_git_url="https://src.fedoraproject.org/rpms/chromium.git"
 current_fedora_patches=()
 remote_fedora_patches=()
@@ -100,8 +99,11 @@ update_fedora_patches() {
 	git clone $fedora_git_url
 	cd chromium
 	remote_fedora_patches=(*.patch)
-	cd $repo_directory/$fedora_patches_path
+	cd $repo_directory/fedora_patches/
 	current_fedora_patches=(*.patch)
+ 	cd ./arm
+	current_fedora_arm_patches=(*.patch)
+ 	cd ../
 	updated_counter=0
 	removed_counter=0
 	patch_not_found_counter=0
@@ -111,6 +113,11 @@ update_fedora_patches() {
 				echo "Updating patch ${current_fedora_patches[$i]} from Fedora"
 				rm ${current_fedora_patches[$i]}
 				cp $repo_directory/fedora-patches-tmp/chromium/${remote_fedora_patches[$j]} ./
+				updated_counter=$((updated_counter+1))
+    			elif [[ "${remote_fedora_patches[$j]}" == "${current_fedora_arm_patches[$i]}" ]]; then
+				echo "Updating patch ${current_fedora_arm_patches[$i]} from Fedora (ARM)"
+				rm ./arm/${current_fedora_patches[$i]}
+				cp $repo_directory/fedora-patches-tmp/chromium/${remote_fedora_patches[$j]} ./arm/
 				updated_counter=$((updated_counter+1))
 			else
 				patch_not_found_counter=$((patch_not_found_counter+1))
