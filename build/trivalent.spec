@@ -64,12 +64,12 @@ Source20: %{chromium_name}256.png
         fpatches = rpm.glob('/builddir/build/SOURCES/fedora-*.patch')
         vpatches = rpm.glob('/builddir/build/SOURCES/vanadium-*.patch')
         hpatches = rpm.glob('/builddir/build/SOURCES/'..macros['chromium_name']..'-*.patch')
-        fpatches = rpm.glob('/builddir/build/SOURCES/fedora-arm-*.patch')
+        farmpatches = rpm.glob('/builddir/build/SOURCES/fedora-arm-*.patch')
     else
         fpatches = rpm.glob(macros['_sourcedir']..'/fedora-*.patch')
         vpatches = rpm.glob(macros['_sourcedir']..'/vanadium-*.patch')
         hpatches = rpm.glob(macros['_sourcedir']..'/'..macros['chromium_name']..'-*.patch')
-        fpatches = rpm.glob(macros['_sourcedir']..'/fedora-arm-*.patch')
+        farmpatches = rpm.glob(macros['_sourcedir']..'/fedora-arm-*.patch')
     end
 
     local count = 1000
