@@ -90,7 +90,7 @@ index 6ac062af92b06..34e88dd013ed6 100644
 +        </settings-dropdown-menu>
 +      </div>
 +      <settings-toggle-button class="cr-row"
-+        pref="{{prefs.printing_enabled}}"
++        pref="{{prefs.printing.enabled}}"
 +        label="Enable Printing"
 +        sub-label="Enables printing capabilities within the browser">
 +      </settings-toggle-button>
