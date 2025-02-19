@@ -321,7 +321,17 @@ find . ! -path "*ash_strings*" \
     ! -path "*device/fido/*" \
     ! -path "*chromeos/*" \
     ! -path "*remoting_strings*" \
-    -exec sed -i -e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} + 
+    -type f \( -iname "*.cc" \
+            -o -iname "*.h" \
+            -o -iname "*.mojom" \
+	    -o -iname "*.gn" \
+	    -o -iname "*.json" \
+	    -o -iname "*.xml" \
+	    -o -iname "*.html" \
+            -o -iname "*.css" \
+	    -o -iname "*.ts" \
+            -o -iname "*.js" \) \
+    -exec sed -i -e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} +
 
 ### Branding ###
 cp -a %{SOURCE12} chrome/app/theme/default_100_percent/chromium/linux/product_logo_16.png
