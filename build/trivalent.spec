@@ -313,6 +313,16 @@ find . -type f \( -iname "*.grd" -o -iname "*.grdp" -o -iname "*.xtb" \) \
         -e 's/REMOVE_PLACEHOLDER_THE_CHROMIUM_AUTHORS/The Chromium Authors/g' \
         -e 's/REMOVE_PLACEHOLDER_CHROMIUM_PROJECT_TAG/ph>Chromium<ph/g' {} + 
 
+find . ! -path "*ash_strings*" \
+    ! -path "*android*" \
+    ! -path "*chromeos_strings*" \
+    ! -path "*ios/chrome*" \
+    ! -path "*tools/grit/*" \
+    ! -path "*device/fido/*" \
+    ! -path "*chromeos/*" \
+    ! -path "*remoting_strings*" \
+    -exec sed -i -e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} + 
+
 ### Branding ###
 cp -a %{SOURCE12} chrome/app/theme/default_100_percent/chromium/linux/product_logo_16.png
 cp -a %{SOURCE14} chrome/app/theme/default_100_percent/chromium/linux/product_logo_32.png
