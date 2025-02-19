@@ -322,15 +322,15 @@ find . ! -path "*ash_strings*" \
     ! -path "*chromeos/*" \
     ! -path "*remoting_strings*" \
     -type f \( -iname "*.cc" \
-            -o -iname "*.h" \
-            -o -iname "*.mojom" \
-            -o -iname "*.mm" \
-	    -o -iname "*.gn" \
-	    -o -iname "*.json" \
-	    -o -iname "*.xml" \
-	    -o -iname "*.html" \
-            -o -iname "*.css" \
-	    -o -iname "*.js" \) \
+            #-o -iname "*.mojom" \
+            #-o -iname "*.mm" \
+	    #-o -iname "*.gn" \
+	    #-o -iname "*.json" \
+	    #-o -iname "*.xml" \
+	    #-o -iname "*.html" \
+            #-o -iname "*.css" \
+	    #-o -iname "*.js" \
+	    -o -iname "*.h" \) \
     -exec sed -i -e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} +
 
 ### Branding ###
