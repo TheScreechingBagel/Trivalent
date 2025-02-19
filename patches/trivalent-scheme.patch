@@ -1,0 +1,195 @@
+diff --git a/chrome/browser/performance_manager/policies/page_discarding_helper.cc b/chrome/browser/performance_manager/policies/page_discarding_helper.cc
+index 9904bf3c578bb..7788096394e6d 100644
+--- a/chrome/browser/performance_manager/policies/page_discarding_helper.cc
++++ b/chrome/browser/performance_manager/policies/page_discarding_helper.cc
+@@ -420,7 +420,7 @@ CanDiscardResult PageDiscardingHelper::CanDiscard(
+   const GURL& main_frame_url = page_node->GetMainFrameUrl();
+   bool is_web_page_or_internal_or_data_page =
+       main_frame_url.SchemeIsHTTPOrHTTPS() ||
+-      main_frame_url.SchemeIs("chrome") ||
++      main_frame_url.SchemeIs("trivalent") ||
+       main_frame_url.SchemeIs(url::kDataScheme);
+   if (!is_web_page_or_internal_or_data_page) {
+     return CanDiscardResult::kProtected;
+diff --git a/components/content_settings/core/browser/content_settings_utils.h b/components/content_settings/core/browser/content_settings_utils.h
+index a9cd281c8a674..d6c825430c3d2 100644
+--- a/components/content_settings/core/browser/content_settings_utils.h
++++ b/components/content_settings/core/browser/content_settings_utils.h
+@@ -44,7 +44,7 @@ class MapValueIterator {
+ // These constants are copied from extensions/common/extension_constants.h and
+ // content/public/common/url_constants.h to avoid complicated dependencies.
+ const char kChromeDevToolsScheme[] = "devtools";
+-const char kChromeUIScheme[] = "chrome";
++const char kChromeUIScheme[] = "trivalent";
+ const char kExtensionScheme[] = "chrome-extension";
+ const char kChromeUIUntrustedScheme[] = "chrome-untrusted";
+ 
+diff --git a/components/content_settings/core/common/content_settings_pattern.cc b/components/content_settings/core/common/content_settings_pattern.cc
+index f5744e8c95579..025ea68735ea2 100644
+--- a/components/content_settings/core/common/content_settings_pattern.cc
++++ b/components/content_settings/core/common/content_settings_pattern.cc
+@@ -41,7 +41,7 @@ size_t g_non_domain_wildcard_non_port_schemes_count = 0;
+ const char* const kSchemeNames[] = {"wildcard",         "other",
+                                     url::kHttpScheme,   url::kHttpsScheme,
+                                     url::kFileScheme,   "chrome-extension",
+-                                    "chrome-search",    "chrome",
++                                    "chrome-search",    "trivalent",
+                                     "chrome-untrusted", "devtools",
+                                     "isolated-app"};
+ 
+diff --git a/components/error_page/common/localized_error.cc b/components/error_page/common/localized_error.cc
+index b286690871ed9..a84d36a03e5e1 100644
+--- a/components/error_page/common/localized_error.cc
++++ b/components/error_page/common/localized_error.cc
+@@ -50,7 +50,7 @@ namespace error_page {
+ namespace {
+ 
+ // Hardcode these constants to avoid dependences on //chrome and //content.
+-const char kChromeUIScheme[] = "chrome";
++const char kChromeUIScheme[] = "trivalent";
+ const char kChromeUIDinoHost[] = "dino";
+ 
+ static const char kRedirectLoopLearnMoreUrl[] =
+diff --git a/components/navigation_metrics/navigation_metrics.cc b/components/navigation_metrics/navigation_metrics.cc
+index 978844c08f3fa..719b7ca679d2d 100644
+--- a/components/navigation_metrics/navigation_metrics.cc
++++ b/components/navigation_metrics/navigation_metrics.cc
+@@ -50,7 +50,7 @@ const char* const kSchemeNames[] = {
+     url::kDataScheme,
+     url::kJavaScriptScheme,
+     url::kAboutScheme,
+-    "chrome",
++    "trivalent",
+     url::kBlobScheme,
+     url::kFileSystemScheme,
+     "chrome-native",
+diff --git a/components/safe_browsing/core/common/safe_browsing_prefs.cc b/components/safe_browsing/core/common/safe_browsing_prefs.cc
+index 1f92a936e44f1..ed93f47eaa506 100644
+--- a/components/safe_browsing/core/common/safe_browsing_prefs.cc
++++ b/components/safe_browsing/core/common/safe_browsing_prefs.cc
+@@ -455,7 +455,7 @@ void GetPasswordProtectionLoginURLsPref(const PrefService& prefs,
+     GURL login_url(value.GetString());
+     // Skip invalid or none-http/https/chrome login URLs.
+     if (login_url.is_valid() &&
+-        (login_url.SchemeIsHTTPOrHTTPS() || login_url.SchemeIs("chrome"))) {
++        (login_url.SchemeIsHTTPOrHTTPS() || login_url.SchemeIs("trivalent"))) {
+       out_login_url_list->push_back(login_url);
+     }
+   }
+diff --git a/components/safe_browsing/core/common/scheme_logger.cc b/components/safe_browsing/core/common/scheme_logger.cc
+index 7adf2aaf2335c..1f7f99c608ac3 100644
+--- a/components/safe_browsing/core/common/scheme_logger.cc
++++ b/components/safe_browsing/core/common/scheme_logger.cc
+@@ -41,7 +41,7 @@ const std::map<std::string, UrlScheme>& GetSchemeOptions() {
+           // From content/public/common/url_constants.cc
+           {"devtools", UrlScheme::kDevTools},
+           {"chrome-error", UrlScheme::kChromeError},
+-          {"chrome", UrlScheme::kChrome},
++          {"trivalent", UrlScheme::kChrome},
+           {"chrome-untrusted", UrlScheme::kChromeUntrusted},
+           {"view-source", UrlScheme::kViewSource},
+           {"externalfile", UrlScheme::kExternalFile},
+diff --git a/components/ukm/scheme_constants.cc b/components/ukm/scheme_constants.cc
+index 0c9c2379e0834..42c7e6e00ee06 100644
+--- a/components/ukm/scheme_constants.cc
++++ b/components/ukm/scheme_constants.cc
+@@ -7,7 +7,7 @@
+ namespace ukm {
+ 
+ const char kAppScheme[] = "app";
+-const char kChromeUIScheme[] = "chrome";
++const char kChromeUIScheme[] = "trivalent";
+ const char kExtensionScheme[] = "chrome-extension";
+ 
+ }  // namespace ukm
+diff --git a/components/url_formatter/url_fixer.cc b/components/url_formatter/url_fixer.cc
+index 5b542afc6bc37..a4be422980f47 100644
+--- a/components/url_formatter/url_fixer.cc
++++ b/components/url_formatter/url_fixer.cc
+@@ -41,7 +41,7 @@ const char* home_directory_override = nullptr;
+ namespace {
+ 
+ // Hardcode these constants to avoid dependences on //chrome and //content.
+-const char kChromeUIScheme[] = "chrome";
++const char kChromeUIScheme[] = "trivalent";
+ const char kDevToolsScheme[] = "devtools";
+ const char kChromeUIDefaultHost[] = "version";
+ const char kViewSourceScheme[] = "view-source";
+diff --git a/components/variations/net/variations_http_headers.cc b/components/variations/net/variations_http_headers.cc
+index 9b6ed6630c7cb..9d3535f0366a4 100644
+--- a/components/variations/net/variations_http_headers.cc
++++ b/components/variations/net/variations_http_headers.cc
+@@ -141,7 +141,7 @@ bool IsFirstPartyContext(Owner owner,
+   const GURL request_initiator_url =
+       resource_request.request_initiator->GetURL();
+   if (request_initiator_url.SchemeIs("chrome-search") ||
+-      request_initiator_url.SchemeIs("chrome")) {
++      request_initiator_url.SchemeIs("trivalent")) {
+     // A scheme matching the above patterns means that the request was
+     // initiated by an internal page, e.g. a request from
+     // chrome://newtab/ for App Launcher resources.
+diff --git a/content/public/common/url_constants.h b/content/public/common/url_constants.h
+index a0df2ab334fb4..d7776af415b24 100644
+--- a/content/public/common/url_constants.h
++++ b/content/public/common/url_constants.h
+@@ -18,7 +18,7 @@ namespace content {
+ // from there.
+ inline constexpr char kChromeDevToolsScheme[] = "devtools";
+ inline constexpr char kChromeErrorScheme[] = "chrome-error";
+-inline constexpr char kChromeUIScheme[] = "chrome";  // Used for WebUIs.
++inline constexpr char kChromeUIScheme[] = "trivalent";  // Used for WebUIs.
+ inline constexpr char kChromeUIUntrustedScheme[] = "chrome-untrusted";
+ inline constexpr char kViewSourceScheme[] = "view-source";
+ #if BUILDFLAG(IS_CHROMEOS)
+diff --git a/gpu/ipc/service/context_url.cc b/gpu/ipc/service/context_url.cc
+index de8b33da3815b..5f7ea3f50cc9a 100644
+--- a/gpu/ipc/service/context_url.cc
++++ b/gpu/ipc/service/context_url.cc
+@@ -13,7 +13,7 @@ namespace gpu {
+ 
+ // static
+ void ContextUrl::SetActiveUrl(const gpu::ContextUrl& active_url) {
+-  bool is_chrome = active_url.url().scheme() == "chrome";
++  bool is_chrome = active_url.url().scheme() == "trivalent";
+ 
+   {
+     static crash_reporter::CrashKeyString<128> crash_key(
+diff --git a/third_party/blink/common/chrome_debug_urls.cc b/third_party/blink/common/chrome_debug_urls.cc
+index 876ecd5c06e45..10d5185daade2 100644
+--- a/third_party/blink/common/chrome_debug_urls.cc
++++ b/third_party/blink/common/chrome_debug_urls.cc
+@@ -33,7 +33,7 @@ bool IsRendererDebugURL(const GURL& url) {
+   if (url.SchemeIs(url::kJavaScriptScheme))
+     return true;
+ 
+-  if (!url.SchemeIs("chrome"))
++  if (!url.SchemeIs("trivalent"))
+     return false;
+ 
+   if (url == kChromeUICheckCrashURL || url == kChromeUIBadCastCrashURL ||
+diff --git a/ui/webui/examples/browser/webui_controller_factory.cc b/ui/webui/examples/browser/webui_controller_factory.cc
+index e96acb2a3500e..c2016f1aabe43 100644
+--- a/ui/webui/examples/browser/webui_controller_factory.cc
++++ b/ui/webui/examples/browser/webui_controller_factory.cc
+@@ -10,7 +10,7 @@
+ #include "url/gurl.h"
+ 
+ namespace {
+-static constexpr char kChromeScheme[] = "chrome";
++static constexpr char kChromeScheme[] = "trivalent";
+ }  // namespace
+ 
+ namespace webui_examples {
+diff --git a/ui/webui/examples/renderer/render_frame_observer.cc b/ui/webui/examples/renderer/render_frame_observer.cc
+index bec07b0f1a12b..898f775f6ff6f 100644
+--- a/ui/webui/examples/renderer/render_frame_observer.cc
++++ b/ui/webui/examples/renderer/render_frame_observer.cc
+@@ -282,7 +282,7 @@ void RenderFrameObserver::OnDestruct() {
+ void RenderFrameObserver::DidStartNavigation(
+     const GURL& url,
+     std::optional<blink::WebNavigationType> navigation_type) {
+-  if (!url.SchemeIs("chrome") || url.host() != "browser") {
++  if (!url.SchemeIs("trivalent") || url.host() != "browser") {
+     this_instance_.reset();
+     return;
+   }
