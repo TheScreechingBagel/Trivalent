@@ -322,6 +322,8 @@ find . ! -path "*ash_strings*" \
     ! -path "*chromeos/*" \
     ! -path "*remoting_strings*" \
     -type f \( -iname "*.cc" \
+	    -o -iname "*.h" \) \
+    -exec sed -i -e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} +
             #-o -iname "*.mojom" \
             #-o -iname "*.mm" \
 	    #-o -iname "*.gn" \
@@ -330,8 +332,6 @@ find . ! -path "*ash_strings*" \
 	    #-o -iname "*.html" \
             #-o -iname "*.css" \
 	    #-o -iname "*.js" \
-	    -o -iname "*.h" \) \
-    -exec sed -i -e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} +
 
 ### Branding ###
 cp -a %{SOURCE12} chrome/app/theme/default_100_percent/chromium/linux/product_logo_16.png
