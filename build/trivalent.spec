@@ -324,6 +324,7 @@ find . ! -path "*ash_strings*" \
     -type f \( -iname "*.cc" \
             -o -iname "*.h" \
             -o -iname "*.mojom" \
+            -o -iname "*.mm" \
 	    -o -iname "*.gn" \
 	    -o -iname "*.json" \
 	    -o -iname "*.xml" \
