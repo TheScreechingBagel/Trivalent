@@ -330,8 +330,7 @@ find . ! -path "*ash_strings*" \
 	    -o -iname "*.xml" \
 	    -o -iname "*.html" \
             -o -iname "*.css" \
-	    -o -iname "*.ts" \
-            -o -iname "*.js" \) \
+	    -o -iname "*.ts" \) \
     -exec sed -i -e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} +
 
 ### Branding ###
