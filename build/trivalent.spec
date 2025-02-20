@@ -322,16 +322,16 @@ find . ! -path "*ash_strings*" \
     ! -path "*chromeos/*" \
     ! -path "*remoting_strings*" \
     -type f \( -iname "*.cc" \
+            -o -iname "*.mojom" \
+            -o -iname "*.mm" \
+	    -o -iname "*.html" \
+            -o -iname "*.css" \
+	    -o -iname "*.js" \
 	    -o -iname "*.h" \) \
     -exec sed -i -e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} +
-            #-o -iname "*.mojom" \
-            #-o -iname "*.mm" \
 	    #-o -iname "*.gn" \
 	    #-o -iname "*.json" \
 	    #-o -iname "*.xml" \
-	    #-o -iname "*.html" \
-            #-o -iname "*.css" \
-	    #-o -iname "*.js" \
 
 ### Branding ###
 cp -a %{SOURCE12} chrome/app/theme/default_100_percent/chromium/linux/product_logo_16.png
