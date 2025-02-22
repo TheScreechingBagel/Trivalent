@@ -326,9 +326,11 @@ find . ! -path "*ash_strings*" \
             -o -iname "*.mm" \
 	    -o -iname "*.h" \) \
     -exec sed -i \
-    	-e 's/\bchrome:\/\/resources\b/CHROME_URL_CSP_PLACEHOLDER/g' \
+    	-e 's/\bchrome:\/\/resources\b/CHROME_RESOURCES_PLACEHOLDER/g' \
+    	-e 's/\bchrome:\/\/theme\b/CHROME_THEME_PLACEHOLDER/g' \
     	-e 's/\bchrome:\/\/\b/trivalent:\/\//g' \
-    	-e 's/\bCHROME_URL_CSP_PLACEHOLDER\b/chrome:\/\/resources/g' {} +
+    	-e 's/\CHROME_RESOURCES_PLACEHOLDER\b/chrome:\/\/resources/g' \
+    	-e 's/\CHROME_THEME_PLACEHOLDER\b/chrome:\/\/theme/g' {} +
 	    #-o -iname "*.html" \
             #-o -iname "*.css" \
 	    #-o -iname "*.js" \
