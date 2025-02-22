@@ -324,11 +324,14 @@ find . ! -path "*ash_strings*" \
     -type f \( -iname "*.cc" \
             -o -iname "*.mojom" \
             -o -iname "*.mm" \
-	    -o -iname "*.html" \
-            -o -iname "*.css" \
-	    -o -iname "*.js" \
 	    -o -iname "*.h" \) \
-    -exec sed -i -e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} +
+    -exec sed -i \
+    	-e 's/\bchrome:\/\/resources\b/CHROME_URL_CSP_PLACEHOLDER/g' {} +
+    	-e 's/\bchrome:\/\/\b/trivalent:\/\//g' {} +
+    	-e 's/\bCHROME_URL_CSP_PLACEHOLDER\b/chrome:\/\/resources/g' {} +
+	    #-o -iname "*.html" \
+            #-o -iname "*.css" \
+	    #-o -iname "*.js" \
 	    #-o -iname "*.gn" \
 	    #-o -iname "*.json" \
 	    #-o -iname "*.xml" \
