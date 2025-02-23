@@ -36,7 +36,7 @@ index 910a0c91aa1fa..bfe959f1475f2 100644
          /*display_globally=*/true,
          /*display_countries=*/{},
          LoggingLevel::kExtra},
-+       // Cloudflare Source: https://developers.cloudflare.com/1.1.1.1/infrastructure/network-operators/#available-endpoints
++       // Source for Cloudflare IP addresses and hostnames/URLs: https://developers.cloudflare.com/1.1.1.1/infrastructure/network-operators/#available-endpoints
 +       {"CloudflareSecurity",
 +        MAKE_BASE_FEATURE_WITH_STATIC_STORAGE(DohProviderCloudflareSecurity,
 +                                              base::FEATURE_ENABLED_BY_DEFAULT),
@@ -61,7 +61,7 @@ index 910a0c91aa1fa..bfe959f1475f2 100644
 +        /*display_globally=*/true,
 +        /*display_countries=*/{},
 +        LoggingLevel::kExtra},
-+       // Control D source: https://controld.com/free-dns
++       // Source for Control D IP addresses and hostnames/URLs: https://controld.com/free-dns
 +       {"ControlD",
 +        MAKE_BASE_FEATURE_WITH_STATIC_STORAGE(DohProviderControlD,
 +                                              base::FEATURE_ENABLED_BY_DEFAULT),
