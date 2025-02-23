@@ -165,16 +165,3 @@ index 910a0c91aa1fa..4478396cdbe35 100644
          /*display_countries=*/{},
          LoggingLevel::kExtra},
         {"Quickline",
-diff --git a/net/dns/dns_config.h b/net/dns/dns_config.h
-index aa2234239cbf0..45eb47a398806 100644
---- a/net/dns/dns_config.h
-+++ b/net/dns/dns_config.h
-@@ -103,7 +103,7 @@ struct NET_EXPORT DnsConfig {
-   // If set to |true|, we will attempt to upgrade the user's DNS configuration
-   // to use DoH server(s) operated by the same provider(s) when the user is
-   // in AUTOMATIC mode and has not pre-specified DoH servers.
--  bool allow_dns_over_https_upgrade = false;
-+  bool allow_dns_over_https_upgrade = true;
- };
- 
- }  // namespace net
