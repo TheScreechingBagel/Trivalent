@@ -1,0 +1,43 @@
+diff --git a/content/common/gpu_pre_sandbox_hook_linux.cc b/content/common/gpu_pre_sandbox_hook_linux.cc
+index 1e0cd989c0d3e..e6d1bb6aab0b3 100644
+--- a/content/common/gpu_pre_sandbox_hook_linux.cc
++++ b/content/common/gpu_pre_sandbox_hook_linux.cc
+@@ -482,7 +482,6 @@ void AddStandardGpuPermissions(std::vector<BrokerFilePermission>* permissions) {
+       BrokerFilePermission::ReadWrite(kNvidiaDeviceModeSetPath));
+   permissions->push_back(BrokerFilePermission::ReadOnly(kNvidiaParamsPath));
+ 
+-  // For SwiftShader
+   base::FilePath module_path;
+   if (base::PathService::Get(base::DIR_MODULE, &module_path)) {
+     std::string sw_path =
+@@ -490,6 +489,16 @@ void AddStandardGpuPermissions(std::vector<BrokerFilePermission>* permissions) {
+     if (!sw_path.empty()) {
+       permissions->push_back(BrokerFilePermission::ReadOnly(sw_path));
+     }
++    std::string gles_path =
++        module_path.Append("libGLESv2.so").MaybeAsASCII();
++    if (!gles_path.empty()) {
++      permissions->push_back(BrokerFilePermission::ReadOnly(gles_path));
++    }
++    std::string egl_path =
++        module_path.Append("libEGL.so").MaybeAsASCII();
++    if (!egl_path.empty()) {
++      permissions->push_back(BrokerFilePermission::ReadOnly(egl_path));
++    }
+   }
+ }
+ 
+diff --git a/content/public/browser/gpu_utils.cc b/content/public/browser/gpu_utils.cc
+index a1e6e4e25d3e2..cbb9a39236010 100644
+--- a/content/public/browser/gpu_utils.cc
++++ b/content/public/browser/gpu_utils.cc
+@@ -89,8 +89,7 @@ const gpu::GpuPreferences GetGpuPreferencesFromCommandLine() {
+       command_line->HasSwitch(switches::kSingleProcess) ||
+       command_line->HasSwitch(switches::kInProcessGPU);
+ 
+-  gpu_preferences.gpu_sandbox_start_early =
+-      command_line->HasSwitch(switches::kGpuSandboxStartEarly);
++  gpu_preferences.gpu_sandbox_start_early = true;
+ 
+   gpu_preferences.enable_vulkan_protected_memory =
+       command_line->HasSwitch(switches::kEnableVulkanProtectedMemory);
