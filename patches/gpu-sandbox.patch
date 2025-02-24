@@ -1,29 +1,54 @@
 diff --git a/content/common/gpu_pre_sandbox_hook_linux.cc b/content/common/gpu_pre_sandbox_hook_linux.cc
-index 1e0cd989c0d3e..e6d1bb6aab0b3 100644
+index 1e0cd989c0d3e..9d478280f9752 100644
 --- a/content/common/gpu_pre_sandbox_hook_linux.cc
 +++ b/content/common/gpu_pre_sandbox_hook_linux.cc
-@@ -482,7 +482,6 @@ void AddStandardGpuPermissions(std::vector<BrokerFilePermission>* permissions) {
-       BrokerFilePermission::ReadWrite(kNvidiaDeviceModeSetPath));
-   permissions->push_back(BrokerFilePermission::ReadOnly(kNvidiaParamsPath));
+@@ -52,8 +52,8 @@ using sandbox::syscall_broker::BrokerProcess;
+ namespace content {
+ namespace {
  
--  // For SwiftShader
-   base::FilePath module_path;
-   if (base::PathService::Get(base::DIR_MODULE, &module_path)) {
-     std::string sw_path =
-@@ -490,6 +489,16 @@ void AddStandardGpuPermissions(std::vector<BrokerFilePermission>* permissions) {
-     if (!sw_path.empty()) {
-       permissions->push_back(BrokerFilePermission::ReadOnly(sw_path));
-     }
-+    std::string gles_path =
-+        module_path.Append("libGLESv2.so").MaybeAsASCII();
-+    if (!gles_path.empty()) {
-+      permissions->push_back(BrokerFilePermission::ReadOnly(gles_path));
-+    }
-+    std::string egl_path =
-+        module_path.Append("libEGL.so").MaybeAsASCII();
-+    if (!egl_path.empty()) {
-+      permissions->push_back(BrokerFilePermission::ReadOnly(egl_path));
-+    }
+-inline bool IsChromeOS() {
+-#if BUILDFLAG(IS_CHROMEOS)
++inline bool IsLinux() {
++#if BUILDFLAG(IS_LINUX)
+   return true;
+ #else
+   return false;
+@@ -104,7 +104,7 @@ static const char kLibTegraPath[] = "/usr/lib/libtegrav4l2.so";
+ 
+ constexpr int dlopen_flag = RTLD_NOW | RTLD_GLOBAL | RTLD_NODELETE;
+ 
+-void AddStandardChromeOsPermissions(
++void AddStandardLinuxPermissions(
+     std::vector<BrokerFilePermission>* permissions) {
+   // For the ANGLE passthrough command decoder.
+   static const char* const kReadOnlyList[] = {"libEGL.so", "libGLESv2.so"};
+@@ -502,9 +502,9 @@ std::vector<BrokerFilePermission> FilePermissionsForGpu(
+ 
+   AddVulkanICDPermissions(&permissions);
+ 
+-  if (IsChromeOS()) {
++  if (IsLinux()) {
+     // Permissions are additive, there can be multiple GPUs in the system.
+-    AddStandardChromeOsPermissions(&permissions);
++    AddStandardLinuxPermissions(&permissions);
+     if (UseV4L2Codec(options))
+       AddV4L2GpuPermissions(&permissions, options);
+     if (IsArchitectureArm()) {
+@@ -662,7 +662,7 @@ bool LoadLibrariesForGpu(
+   if (IsArchitectureArm()) {
+     LoadArmGpuLibraries();
    }
- }
- 
+-  if (IsChromeOS()) {
++  if (IsLinux()) {
+     if (options.use_amd_specific_policies) {
+       if (!LoadAmdGpuLibraries())
+         return false;
+@@ -685,7 +685,7 @@ sandbox::syscall_broker::BrokerCommandSet CommandSetForGPU(
+   command_set.set(sandbox::syscall_broker::COMMAND_ACCESS);
+   command_set.set(sandbox::syscall_broker::COMMAND_OPEN);
+   command_set.set(sandbox::syscall_broker::COMMAND_STAT);
+-  if (IsChromeOS() &&
++  if (IsLinux() &&
+       (options.use_amd_specific_policies ||
+        options.use_intel_specific_policies ||
+        options.use_nvidia_specific_policies ||
