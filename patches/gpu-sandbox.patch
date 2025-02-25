@@ -1,5 +1,5 @@
 diff --git a/content/common/gpu_pre_sandbox_hook_linux.cc b/content/common/gpu_pre_sandbox_hook_linux.cc
-index 1e0cd989c0d3e..9d478280f9752 100644
+index 1e0cd989c0d3e..1371fccc22bda 100644
 --- a/content/common/gpu_pre_sandbox_hook_linux.cc
 +++ b/content/common/gpu_pre_sandbox_hook_linux.cc
 @@ -52,8 +52,8 @@ using sandbox::syscall_broker::BrokerProcess;
@@ -34,7 +34,19 @@ index 1e0cd989c0d3e..9d478280f9752 100644
      if (UseV4L2Codec(options))
        AddV4L2GpuPermissions(&permissions, options);
      if (IsArchitectureArm()) {
-@@ -662,7 +662,7 @@ bool LoadLibrariesForGpu(
+@@ -604,11 +604,6 @@ void LoadArmGpuLibraries() {
+ 
+ bool LoadAmdGpuLibraries() {
+   // Preload the amdgpu-dependent libraries.
+-  if (nullptr == dlopen("libglapi.so", dlopen_flag)) {
+-    LOG(ERROR) << "dlopen(libglapi.so) failed with error: " << dlerror();
+-    return false;
+-  }
+-
+   const char* radeonsi_lib = "/usr/lib64/dri/radeonsi_dri.so";
+ #if defined(DRI_DRIVER_DIR)
+   radeonsi_lib = DRI_DRIVER_DIR "/radeonsi_dri.so";
+@@ -662,7 +657,7 @@ bool LoadLibrariesForGpu(
    if (IsArchitectureArm()) {
      LoadArmGpuLibraries();
    }
@@ -43,7 +55,7 @@ index 1e0cd989c0d3e..9d478280f9752 100644
      if (options.use_amd_specific_policies) {
        if (!LoadAmdGpuLibraries())
          return false;
-@@ -685,7 +685,7 @@ sandbox::syscall_broker::BrokerCommandSet CommandSetForGPU(
+@@ -685,7 +680,7 @@ sandbox::syscall_broker::BrokerCommandSet CommandSetForGPU(
    command_set.set(sandbox::syscall_broker::COMMAND_ACCESS);
    command_set.set(sandbox::syscall_broker::COMMAND_OPEN);
    command_set.set(sandbox::syscall_broker::COMMAND_STAT);
