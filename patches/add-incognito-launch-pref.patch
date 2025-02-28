@@ -2,7 +2,7 @@ diff --git a/chrome/browser/prefs/incognito_mode_prefs.cc b/chrome/browser/prefs
 index 252de88cbf948..56b816ea68dde 100644
 --- a/chrome/browser/prefs/incognito_mode_prefs.cc
 +++ b/chrome/browser/prefs/incognito_mode_prefs.cc
-@@ -163,6 +163,7 @@ bool IncognitoModePrefs::ShouldLaunchIncognitoInternal(
+@@ -163,6 +163,9 @@ bool IncognitoModePrefs::ShouldLaunchIncognitoInternal(
    }
    bool should_use_incognito =
        forced_by_switch ||
