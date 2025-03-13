@@ -27,7 +27,7 @@ get_remote_vanadium_patches() {
 			fi
 			if [[ $retry == 2 ]]; then
 				echo "Aborting!"
-				cd $repo_directory
+				cd "$repo_directory"
 				rm -rf vanadium-patches-tmp/
 				exit 1
 			fi
@@ -45,17 +45,17 @@ get_remote_vanadium_patches() {
 		else
 			echo "ERROR! Remote patch ${remote_vanadium_patches[$i]} does match expected naming scheme!"
 			echo "Aborting!"
-			cd $repo_directory
+			cd "$repo_directory"
 			rm -rf vanadium-patches-tmp/
 			exit 1
 		fi
 	done
-	cd $repo_directory
+	cd "$repo_directory"
 }
 
 update_vanadium_patches() {
 	get_remote_vanadium_patches
-	cd $vanadium_patches_path
+	cd "$vanadium_patches_path"
 	current_vanadium_patches=(*.patch)
 	for ((i=0; i<${#current_vanadium_patches[@]}; i++)); do
 		truncated_vanadium_patches[$i]="${current_vanadium_patches[$i]:4}"
@@ -73,8 +73,8 @@ update_vanadium_patches() {
 					echo "Updating patch ${current_vanadium_patches[$i]}"
 					echo "	Patch renamed to: ${remote_vanadium_patches[$j]}"
 				fi
-				rm ${current_vanadium_patches[$i]}
-				cp $repo_directory/vanadium-patches-tmp/Vanadium/patches/${remote_vanadium_patches[$j]} ./
+				rm "${current_vanadium_patches[$i]}"
+				cp "$repo_directory/vanadium-patches-tmp/Vanadium/patches/${remote_vanadium_patches[$j]}" ./
 				updated_counter=$((updated_counter+1))
 			else
 				patch_not_found_counter=$((patch_not_found_counter+1))
@@ -84,7 +84,7 @@ update_vanadium_patches() {
 		if [[ $patch_not_found_counter == ${#truncated_remote_vanadium_patches[@]} ]]; then
 			echo "Removing ${current_vanadium_patches[i]}"
 			echo "	Patch has been removed in Vanadium"
-			rm ${current_vanadium_patches[$i]}
+			rm "${current_vanadium_patches[$i]}"
 			removed_counter=$((removed_counter+1))
 		fi
 		patch_not_found_counter=0
@@ -92,7 +92,7 @@ update_vanadium_patches() {
 	echo ""
 	echo "Updated $updated_counter patches."
 	echo "Removed $removed_counter patches."
-	cd $repo_directory
+	cd "$repo_directory"
 }
 
 update_fedora_patches() {
@@ -100,7 +100,7 @@ update_fedora_patches() {
 	git clone $fedora_git_url
 	cd chromium
 	remote_fedora_patches=(*.patch)
-	cd $repo_directory/$fedora_patches_path
+	cd "$repo_directory/$fedora_patches_path"
 	current_fedora_patches=(*.patch)
 	updated_counter=0
 	removed_counter=0
@@ -109,8 +109,8 @@ update_fedora_patches() {
 		for ((j=0; j<${#remote_fedora_patches[@]}; j++)); do
 			if [[ "${remote_fedora_patches[$j]}" == "${current_fedora_patches[$i]}" ]]; then
 				echo "Updating patch ${current_fedora_patches[$i]} from Fedora"
-				rm ${current_fedora_patches[$i]}
-				cp $repo_directory/fedora-patches-tmp/chromium/${remote_fedora_patches[$j]} ./
+				rm "${current_fedora_patches[$i]}"
+				cp "$repo_directory/fedora-patches-tmp/chromium/${remote_fedora_patches[$j]}" ./
 				updated_counter=$((updated_counter+1))
 			else
 				patch_not_found_counter=$((patch_not_found_counter+1))
@@ -118,7 +118,7 @@ update_fedora_patches() {
 		done
 		if [[ $patch_not_found_counter == ${#remote_fedora_patches[@]} ]]; then
 			echo "Deleting removed patch ${current_fedora_patches[i]}"
-			rm ${current_fedora_patches[$i]}
+			rm "${current_fedora_patches[$i]}"
 			removed_counter=$((removed_counter+1))
 		fi
 		patch_not_found_counter=0
@@ -126,7 +126,7 @@ update_fedora_patches() {
 	echo ""
 	echo "Updated $updated_counter patches."
 	echo "Removed $removed_counter patches."
-	cd $repo_directory
+	cd "$repo_directory"
 }
 
 mkdir vanadium-patches-tmp/ # create a temporary directory for cloning the Vanadium patches
