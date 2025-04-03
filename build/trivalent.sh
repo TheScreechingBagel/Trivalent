@@ -1,8 +1,4 @@
 #!/bin/bash
-#
-# Copyright (c) 2025 The Trivalent Authors. All rights reserved.
-# Use of this source code is governed by a Apache-style license that can be
-# found in the LICENSE file.
 
 # Sanitize risky env variables
 export PATH="/usr/bin"
