@@ -2,6 +2,9 @@
 
 # Determine Ozone platform automatically or through a user supplied env variable 
 export OZONE_PLATFORM="${OZONE_PLATFORM:-$XDG_SESSION_TYPE}"
+if [ "$OZONE_PLATFORM" != "wayland" ] && [ "$OZONE_PLATFORM" != "x11" ]; then
+  OZONE_PLATFORM="$XDG_SESSION_TYPE"
+fi
 
 # Sanitize risky env variables
 export PATH="/usr/bin"
