@@ -1,19 +1,20 @@
 #!/bin/bash
 
-# Sanitize risky env variables
-export PATH="/usr/bin:/bin"
-export LD_PRELOAD=""
-export LD_LIBRARY_PATH=""
-export LD_AUDIT=""
-export LD_PROFILE=""
+# Sanitize & protect risky variables
+readonly HOME="$HOME"
+readonly LD_PRELOAD=""
+readonly LD_LIBRARY_PATH=""
+readonly LD_AUDIT=""
+readonly LD_PROFILE=""
+PATH="/usr/bin:/bin"
 
 # unify branding
-export CHROMIUM_NAME="@@CHROMIUM_NAME@@"
+readonly CHROMIUM_NAME="@@CHROMIUM_NAME@@"
 
 # Let the wrapped binary know that it has been run through the wrapper.
-export CHROME_WRAPPER="`readlink -f "$0"`"
+readonly CHROME_WRAPPER="`readlink -f "$0"`"
 
-HERE="`dirname "$CHROME_WRAPPER"`"
+readonly HERE="`dirname "$CHROME_WRAPPER"`"
 
 # We include some xdg utilities next to the binary, and we want to prefer them
 # over the system versions when we know the system versions are very old. We
@@ -22,7 +23,7 @@ HERE="`dirname "$CHROME_WRAPPER"`"
 # so that the system xdg utilities (including any distro patches) will be used.
 if ! which xdg-settings &> /dev/null; then
   # Old xdg utilities. Prepend $HERE to $PATH to use ours instead.
-  export PATH="$HERE:$PATH"
+  PATH="$HERE:$PATH"
 else
   # Use system xdg utilities. But first create mimeapps.list if it doesn't
   # exist; some systems have bugs in xdg-mime that make it fail without it.
@@ -30,6 +31,7 @@ else
   mkdir -p "$xdg_app_dir"
   [ -f "$xdg_app_dir/mimeapps.list" ] || touch "$xdg_app_dir/mimeapps.list"
 fi
+readonly PATH="$PATH"
 
 export CHROME_VERSION_EXTRA="Built from source for @@BUILD_TARGET@@"
 
