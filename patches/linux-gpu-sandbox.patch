@@ -59,7 +59,7 @@ index 97f7221cb1..85b8566e45 100644
        // that requires the following libs and files to be accessible.
        "/usr/lib64/libgallium_dri.so",
 +#if !BUILDFLAG(IS_CHROMEOS)
-+//      "/usr/lib64/libgallium-25.0.0.so"
++//      "/usr/lib64/libgallium-25.0.0.so",
 +      "/usr/lib64/libgallium-25.0.2.so",
 +      "/usr/lib64/gbm/dri_gbm.so",
 +      "/usr/lib64/dri/iHD_drv_video.so",
