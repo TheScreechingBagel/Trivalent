@@ -107,7 +107,7 @@ Source20: %{chromium_name}256.png
 }
 
 BuildRequires: golang-github-evanw-esbuild
-BuildRequires: clang
+#BuildRequires: clang
 BuildRequires: clang-tools-extra
 BuildRequires: llvm
 BuildRequires: lld
