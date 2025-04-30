@@ -496,8 +496,8 @@ export RUSTFLAGS
 export RUSTC_BOOTSTRAP=1
 rustc_version="$(rustc --version)"
 
-# set clang version
-clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
+# add internal clang for build
+export PATH="$PATH:$(pwd)/third_party/llvm-build/Release+Asserts/bin"
 
 CHROMIUM_GN_DEFINES=''
 CHROMIUM_GN_DEFINES+=' custom_toolchain="//build/toolchain/linux/unbundle:default"'
