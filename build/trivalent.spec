@@ -111,7 +111,7 @@ BuildRequires: clang
 BuildRequires: clang-tools-extra
 BuildRequires: llvm
 BuildRequires: lld
-BuildRequires: rustc
+BuildRequires: rustcclang --version | sed -n 's/clang version //p' | cut -d. -f1
 BuildRequires: bindgen-cli
 BuildRequires:	alsa-lib-devel
 BuildRequires:	atk-devel
@@ -134,7 +134,7 @@ BuildRequires:	libcap-devel
 BuildRequires:	libcurl-devel
 BuildRequires:	libgcrypt-devel
 BuildRequires:	libudev-devel
-BuildRequires:	libuuid-devel
+BuildRequires:	libuuid-develclang --version | sed -n 's/clang version //p' | cut -d. -f1
 BuildRequires:	libusb-compat-0.1-devel
 BuildRequires:	libutempter-devel
 BuildRequires:	libXdamage-devel
@@ -403,7 +403,7 @@ Requires(post): /usr/sbin/restorecon
 Trivalent is a security-focused browser built upon the Chromium web browser.
 
 %package common
-Summary: Files needed for Chromium
+Summary: Files needed for Chromium--
 %description common
 %{summary}.
 
@@ -470,7 +470,6 @@ ln -s %{_bindir}/eu-strip buildtools/third_party/eu-strip/bin/eu-strip
 sed -i 's/getenv("CHROME_VERSION_EXTRA")/"%{chromium_name}"/' chrome/common/channel_info_posix.cc
 
 %build
-
 # reduce warnings
 FLAGS=' -Wno-deprecated-declarations -Wno-unknown-warning-option -Wno-unused-command-line-argument'
 FLAGS+=' -Wno-unused-but-set-variable -Wno-unused-result -Wno-unused-function -Wno-unused-variable'
@@ -496,17 +495,11 @@ export RUSTFLAGS
 
 export RUSTC_BOOTSTRAP=1
 rustc_version="$(rustc --version)"
-rust_bindgen_root="%{_prefix}"
 
 # set clang version
 clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
-%if 0%{?fedora} > 41
-clang_base_path="$(PATH=/usr/bin:/usr/sbin which clang | sed 's#/bin/.*##')"
-%else
-clang_base_path="$(clang --version | grep InstalledDir | cut -d' ' -f2 | sed 's#/bin##')"
-%endif
- 
-CHROMIUM_GN_DEFINES=""
+
+CHROMIUM_GN_DEFINES=''
 CHROMIUM_GN_DEFINES+=' custom_toolchain="//build/toolchain/linux/unbundle:default"'
 CHROMIUM_GN_DEFINES+=' host_toolchain="//build/toolchain/linux/unbundle:default"'
 CHROMIUM_GN_DEFINES+=' enable_nacl=false'
@@ -514,17 +507,16 @@ CHROMIUM_GN_DEFINES+=' system_libdir="%{_lib}"'
 CHROMIUM_GN_DEFINES+=' is_official_build=true'
 sed -i 's|OFFICIAL_BUILD|GOOGLE_CHROME_BUILD|g' tools/generate_shim_headers/generate_shim_headers.py
 CHROMIUM_GN_DEFINES+=' chrome_pgo_phase=0'
-CHROMIUM_GN_DEFINES+=' is_cfi=true use_thin_lto=true'
+CHROMIUM_GN_DEFINES+=' is_cfi=true use_cfi_cast=true'
 CHROMIUM_GN_DEFINES+=' enable_reporting=false'
 CHROMIUM_GN_DEFINES+=' enable_remoting=false'
 CHROMIUM_GN_DEFINES+=' is_clang=true'
-CHROMIUM_GN_DEFINES+=" clang_base_path=\"$clang_base_path\""
-CHROMIUM_GN_DEFINES+=" clang_version=\"$clang_version\""
+CHROMIUM_GN_DEFINES+=' clang_version="$clang_version"'
 CHROMIUM_GN_DEFINES+=' clang_use_chrome_plugins=false'
 CHROMIUM_GN_DEFINES+=' use_lld=true'
 CHROMIUM_GN_DEFINES+=' rust_sysroot_absolute="%{_prefix}"'
-CHROMIUM_GN_DEFINES+=" rust_bindgen_root=\"$rust_bindgen_root\""
-CHROMIUM_GN_DEFINES+=" rustc_version=\"$rustc_version\""
+CHROMIUM_GN_DEFINES+=' rust_bindgen_root="%{_prefix}"'
+CHROMIUM_GN_DEFINES+=' rustc_version="$rustc_version"'
 CHROMIUM_GN_DEFINES+=' use_sysroot=false'
 CHROMIUM_GN_DEFINES+=' icu_use_data_file=true'
 CHROMIUM_GN_DEFINES+=' target_os="linux"'
