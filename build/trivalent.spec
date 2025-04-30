@@ -122,7 +122,6 @@ BuildRequires: pkgconfig(Qt5Core)
 BuildRequires: pkgconfig(Qt5Widgets)
 BuildRequires: pkgconfig(Qt6Core)
 BuildRequires: pkgconfig(Qt6Widgets)
-#BuildRequires: compiler-rt
 BuildRequires: libatomic
 BuildRequires:	libcap-devel
 BuildRequires:	libcurl-devel
@@ -135,22 +134,16 @@ BuildRequires:	libXdamage-devel
 BuildRequires:	libXtst-devel
 BuildRequires:	xcb-proto
 BuildRequires:	mesa-libgbm-devel
-BuildRequires: nodejs
-BuildRequires: gn
 BuildRequires:	nss-devel >= 3.26
 BuildRequires:	pciutils-devel
 BuildRequires:	pulseaudio-libs-devel
 BuildRequires:	pipewire-devel
 BuildRequires: libappstream-glib
 
-# Fedora tries to use system libs whenever it can.
 BuildRequires:	bzip2-devel
 BuildRequires:	dbus-glib-devel
-# For eu-strip
 BuildRequires:	elfutils
 BuildRequires:	elfutils-libelf-devel
-# One of the python scripts invokes git to look for a hash. So helpful.
-BuildRequires:	/usr/bin/git
 BuildRequires:	hwdata
 BuildRequires:	kernel-headers
 BuildRequires:	libffi-devel
@@ -164,8 +157,9 @@ BuildRequires: python3-jinja2
 BuildRequires: yasm
 BuildRequires: zlib-devel
 BuildRequires:	systemd
-BuildRequires: ninja-build
 BuildRequires: libevdev-devel
+# One of the python scripts invokes git to look for a hash. So helpful.
+BuildRequires: /usr/bin/git
 
 Requires: nss%{_isa} >= 3.26
 Requires: nss-mdns%{_isa}
@@ -425,6 +419,12 @@ PATH="$PATH:$(pwd)/third_party/llvm-build/Release+Asserts/bin"
 # add internal rust utils to PATH for build
 PATH="$PATH:$(pwd)/third_party/rust-toolchain/bin"
 
+# add internal nodejs to PATH for build
+PATH="$PATH:$(pwd)/third_party/node/linux/node-linux-x64/bin
+
+# add internal ninja to PATH for build
+PATH="$PATH:$(pwd)/third_party/ninja/
+
 export PATH
 
 CHROMIUM_GN_DEFINES=''
@@ -470,7 +470,7 @@ if python3 -c 'import google ; print google.__path__' 2> /dev/null ; then \
     exit 1 ; \
 fi
 
-mkdir -p %{chromebuilddir} && cp -a %{_bindir}/gn %{chromebuilddir}/
+mkdir -p %{chromebuilddir} && cp -a buildtools/linux64/gn %{chromebuilddir}/
 
 %{chromebuilddir}/gn --script-executable=%{chromium_pybin} gen --args="$CHROMIUM_GN_DEFINES" %{chromebuilddir}
 
