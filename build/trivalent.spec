@@ -142,7 +142,6 @@ BuildRequires: libappstream-glib
 
 BuildRequires:	bzip2-devel
 BuildRequires:	dbus-glib-devel
-BuildRequires:	elfutils
 BuildRequires:	elfutils-libelf-devel
 BuildRequires:	hwdata
 BuildRequires:	kernel-headers
@@ -378,12 +377,6 @@ cp -a %{SOURCE15} chrome/app/theme/default_200_percent/chromium/product_logo_nam
 # See `man find` for how the `-exec command {} +` syntax works
 find -type f \( -iname "*.py" \) -exec sed -i '1s=^#! */usr/bin/\(python\|env python\)[23]\?=#!%{chromium_pybin}=' {} +
 
-# Get rid of the pre-built eu-strip binary, it is x86_64 and of mysterious origin
-rm -rf buildtools/third_party/eu-strip/bin/eu-strip
-
-# Replace it with a symlink to the Fedora copy
-ln -s %{_bindir}/eu-strip buildtools/third_party/eu-strip/bin/eu-strip
-
 # Hard code extra version
 sed -i 's/getenv("CHROME_VERSION_EXTRA")/"%{chromium_name}"/' chrome/common/channel_info_posix.cc
 
@@ -455,8 +448,6 @@ CHROMIUM_GN_DEFINES+=' enable_widevine=true'
 CHROMIUM_GN_DEFINES+=' rtc_use_pipewire=true rtc_link_pipewire=true'
 CHROMIUM_GN_DEFINES+=' use_system_libffi=true' # ld.lld: error: unable to find library -lffi_pic
 export CHROMIUM_GN_DEFINES
-
-#sed -i 's|OFFICIAL_BUILD|GOOGLE_CHROME_BUILD|g' tools/generate_shim_headers/generate_shim_headers.py
 
 # Check that there is no system 'google' module, shadowing bundled ones:
 if python3 -c 'import google ; print google.__path__' 2> /dev/null ; then \
