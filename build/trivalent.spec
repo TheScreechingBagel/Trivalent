@@ -158,7 +158,7 @@ BuildRequires: zlib-devel
 BuildRequires:	systemd
 BuildRequires: libevdev-devel
 # One of the python scripts invokes git to look for a hash. So helpful.
-BuildRequires: /usr/bin/git
+BuildRequires:	git-core
 
 Requires: nss%{_isa} >= 3.26
 Requires: nss-mdns%{_isa}
