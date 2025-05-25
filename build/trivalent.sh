@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Sanitize & protect risky variables
+declare -rx LD_PRELOAD=""
+declare -rx LD_LIBRARY_PATH=""
+declare -rx LD_AUDIT=""
+declare -rx LD_PROFILE=""
 declare -rx PATH="/usr/bin:/bin"
 declare -rx HOME="$HOME"
 declare -rx XDG_RUNTIME_DIR="$XDG_RUNTIME_DIR"
 declare -rx XAUTHORITY="$XAUTHORITY"
 declare -rx DISPLAY="$DISPLAY"
-declare -rx LD_PRELOAD=""
-declare -rx LD_LIBRARY_PATH=""
-declare -rx LD_AUDIT=""
-declare -rx LD_PROFILE=""
 
 # unify branding
 declare -r CHROMIUM_NAME="@@CHROMIUM_NAME@@"
@@ -28,7 +28,7 @@ declare -r HERE="`dirname "$CHROME_WRAPPER"`"
 declare -r CHROMIUM_FLAGS="$CHROMIUM_FLAGS"
 
 # desktop integration
-xdg_app_dir="${XDG_DATA_HOME:-$HOME/.local/share/applications}"
+declare -r xdg_app_dir="${XDG_DATA_HOME:-$HOME/.local/share/applications}"
 mkdir -p "$xdg_app_dir"
 [[ -f "$xdg_app_dir/mimeapps.list" ]] || touch "$xdg_app_dir/mimeapps.list"
 
@@ -48,7 +48,6 @@ if [[ $IS_BROWSER_RUNNING -ne 0 ]] && [[ -f "$HOME/.config/$CHROMIUM_NAME/Single
 else
   echo "A process is already open in this directory or Singleton process files are not present."
 fi
-
 
 BWRAP_ARGS="--dev-bind / /"
 [[ -f "/etc/ld.so.preload" ]] && BWRAP_ARGS+=" --ro-bind /dev/null /etc/ld.so.preload"
