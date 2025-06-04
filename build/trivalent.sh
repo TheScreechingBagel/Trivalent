@@ -36,12 +36,8 @@ mkdir -p "$xdg_app_dir"
 # if so runs the installer
 [[ -f "/usr/lib64/trivalent/install_filter.sh" ]] && /bin/bash /usr/lib64/trivalent/install_filter.sh
 
-PROCESSES=$(ps aux)
-echo $PROCESSES | grep "$CHROMIUM_NAME --type=zygote" | grep -v "grep" > /dev/null
-IS_BROWSER_RUNNING=$?
-
 # Fix Singleton process locking if the browser isn't running and the singleton files are present
-if [[ $IS_BROWSER_RUNNING -ne 0 ]] && compgen -G "$HOME/.config/$CHROMIUM_NAME/Singleton*" > /dev/null; then
+if [[ -z "$(ps aux | grep "$CHROMIUM_NAME --type=zygote" | grep -v "grep")" && -n "$(compgen -G "$HOME/.config/$CHROMIUM_NAME/Singleton*")" ]]; then
   echo "Ruh roh! This shouldn't be here..."
   rm "$HOME/.config/$CHROMIUM_NAME/Singleton"*
 else
