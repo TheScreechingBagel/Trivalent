@@ -1,8 +1,34 @@
 diff --git a/build/config/compiler/BUILD.gn b/build/config/compiler/BUILD.gn
-index 5898b8c54bef2..d924cec372c1a 100644
+index e579cc9a9d..8d0450303f 100644
 --- a/build/config/compiler/BUILD.gn
 +++ b/build/config/compiler/BUILD.gn
-@@ -371,6 +371,10 @@ config("compiler") {
+@@ -361,14 +361,23 @@ config("compiler") {
+       # On Aarch64, SCS requires the x18 register to be unused because it will hold
+       # a pointer to the shadow stack. For Android we know that Clang doesn't use
+       # x18 by default. On other OSs adding "-ffixed-x18" might be required.
+-      assert(is_android)
++      assert(is_android || is_linux)
+ 
+       scs_parameters = [
+         "-fsanitize=shadow-call-stack",
+-        "-fno-stack-protector",
++        "-fstack-protector-strong",
+       ]
++      rs_scs_params = [ "-Zsanitize=shadow-call-stack" ]
++
++      # fixed-x18 may be required for ShadowCallStack
++      if (is_linux) {
++        scs_paramaters += [ "-ffixed-x18" ]
++        rs_scs_params += [ "-Zfixed-x18" ]
++      }
++
+       cflags += scs_parameters
+       ldflags += scs_parameters
++      rustflags += rs_scs_params
+     } else {
+       if (is_apple) {
+         # The strong variant of the stack protector significantly increases
+@@ -388,6 +397,16 @@ config("compiler") {
        }
      }
  
@@ -10,10 +36,16 @@ index 5898b8c54bef2..d924cec372c1a 100644
 +      cflags += [ "-fstack-clash-protection" ]
 +    }
 +
++    if (enable_cet_ibt) {
++      cflags += [ "-fcf-protection=branch" ]
++      ldflags += [ "-fcf-protection=branch", "-Wl,z,force-ibt" ]
++      rustflags += [ "-Zcf-protection=branch" ]
++    }
++
      if (use_lld) {
        ldflags += [ "-fuse-ld=lld" ]
        if (lld_path != "") {
-@@ -2059,7 +2063,7 @@ config("chromium_code") {
+@@ -2199,7 +2218,7 @@ config("chromium_code") {
        # Non-chromium code is not guaranteed to compile cleanly with
        # _FORTIFY_SOURCE. Also, fortified build may fail when optimizations are
        # disabled, so only do that for Release build.
@@ -22,3 +54,58 @@ index 5898b8c54bef2..d924cec372c1a 100644
  
        # ChromeOS's toolchain supports a high-quality _FORTIFY_SOURCE=3
        # implementation with a few custom glibc patches. Use that if it's
+@@ -3265,8 +3284,14 @@ buildflag_header("compiler_buildflags") {
+ }
+ 
+ config("cet_shadow_stack") {
+-  if (enable_cet_shadow_stack && is_win) {
+-    assert(target_cpu == "x64")
+-    ldflags = [ "/CETCOMPAT" ]
++  if (enable_cet_shadow_stack) {
++    if (is_win) {
++      assert(target_cpu == "x64")
++      ldflags = [ "/CETCOMPAT" ]
++    } else if (is_linux) {
++      cflags = [ "-fcf-protection=return" ]
++      ldflags = [ "-fcf-protection=return", "-Wl,-z,shstk" ]
++      rustflags = [ "-Zcf-protection=return" ]
++    }
+   }
+ }
+diff --git a/build/config/compiler/compiler.gni b/build/config/compiler/compiler.gni
+index a47aa1cf4f..4ae1e1ac55 100644
+--- a/build/config/compiler/compiler.gni
++++ b/build/config/compiler/compiler.gni
+@@ -120,6 +120,10 @@ declare_args() {
+   # https://chromium.googlesource.com/chromium/src/+/main/docs/design/sandbox.md#cet-shadow-stack
+   enable_cet_shadow_stack = target_cpu == "x64"
+ 
++  # Enable Control-flow Enforcement Technology (CET) branch protection.
++  # Only enable on Linux.
++  enable_cet_ibt = target_cpu == "x64" && is_linux
++
+   # Set to true to enable using the ML inliner in LLVM. This currently only
+   # enables the ML inliner when targeting Android.
+   # Currently the ML inliner is only supported on linux hosts
+diff --git a/build/config/linux/BUILD.gn b/build/config/linux/BUILD.gn
+index 131bb71d1d..e871d9a5fe 100644
+--- a/build/config/linux/BUILD.gn
++++ b/build/config/linux/BUILD.gn
+@@ -20,11 +20,13 @@ config("compiler") {
+     cflags = []
+     asmflags = []
+     if (arm_control_flow_integrity == "standard") {
+-      cflags += [ "-mbranch-protection=standard" ]
+-      asmflags += [ "-mbranch-protection=standard" ]
++      cflags += [ "-mbranch-protection=pac-ret+leaf+bti" ]
++      asmflags += [ "-mbranch-protection=pac-ret+lead+bti" ]
++      rustflags += [ "-Zbranch-protection=bti,pac-ret,leaf" ]
+     } else if (arm_control_flow_integrity == "pac") {
+-      cflags += [ "-mbranch-protection=pac-ret" ]
+-      asmflags += [ "-mbranch-protection=pac-ret" ]
++      cflags += [ "-mbranch-protection=pac-ret+leaf" ]
++      asmflags += [ "-mbranch-protection=pac-ret+leaf" ]
++      rustflags += [ "-Zbranch-protection=pac-ret,leaf" ]
+     }
+   }
+ }
