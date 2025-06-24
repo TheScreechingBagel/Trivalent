@@ -34,12 +34,12 @@ index 59942a3cf6..a929cc080a 100644
  
 +    if (is_linux) {
 +      cflags += [ "-fstack-clash-protection" ]
-+    }
-+
-+    if (enable_cet_ibt) {
 +      cflags += [ "-fcf-protection=branch" ]
 +      ldflags += [ "-fcf-protection=branch" ]
 +      rustflags += [ "-Zcf-protection=branch" ]
++
++      cflags += [ "-mharden-sls=all" ]
++      rustflags += [ "-Ctarget-feature=+harden-sls-ijmp", "-Ctarget-feature=+harden-sls-ret" ]
 +    }
 +
      if (use_lld) {
@@ -64,28 +64,13 @@ index 59942a3cf6..a929cc080a 100644
 -    ldflags = [ "/CETCOMPAT" ]
 +    if (is_win) {
 +      ldflags = [ "/CETCOMPAT" ]
-+    } else if (false && is_linux) {
++    } else if (is_linux) {
 +      cflags = [ "-fcf-protection=return" ]
 +      ldflags = [ "-fcf-protection=return", "-Wl,-z,shstk" ]
 +      rustflags = [ "-Zcf-protection=return" ]
 +    }
    }
  }
-diff --git a/build/config/compiler/compiler.gni b/build/config/compiler/compiler.gni
-index a47aa1cf4f..4ae1e1ac55 100644
---- a/build/config/compiler/compiler.gni
-+++ b/build/config/compiler/compiler.gni
-@@ -120,6 +120,10 @@ declare_args() {
-   # https://chromium.googlesource.com/chromium/src/+/main/docs/design/sandbox.md#cet-shadow-stack
-   enable_cet_shadow_stack = target_cpu == "x64"
- 
-+  # Enable Control-flow Enforcement Technology (CET) branch protection.
-+  # Only enable on Linux.
-+  enable_cet_ibt = target_cpu == "x64" && is_linux
-+
-   # Set to true to enable using the ML inliner in LLVM. This currently only
-   # enables the ML inliner when targeting Android.
-   # Currently the ML inliner is only supported on linux hosts
 diff --git a/build/config/linux/BUILD.gn b/build/config/linux/BUILD.gn
 index 131bb71d1d..b584e8d547 100644
 --- a/build/config/linux/BUILD.gn
