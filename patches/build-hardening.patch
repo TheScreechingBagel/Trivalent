@@ -109,10 +109,10 @@ index 66b993426a..987e6c80f9 100644
      }
  
      if (use_cfi_diag) {
-diff --git a/BUILD.gn b/BUILD.gn
+diff --git a/v8/BUILD.gn b/v8/BUILD.gn
 index f2f72a02..b41fca74 100644
---- a/BUILD.gn
-+++ b/BUILD.gn
+--- a/v8/BUILD.gn
++++ b/v8/BUILD.gn
 @@ -821,7 +821,7 @@ assert(!v8_enable_snapshot_compression || v8_use_zlib,
         "Snapshot compression requires zlib")
  
