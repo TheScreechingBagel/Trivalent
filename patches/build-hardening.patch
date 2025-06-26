@@ -1,8 +1,8 @@
 diff --git a/build/config/compiler/BUILD.gn b/build/config/compiler/BUILD.gn
-index 59942a3cf6..8275023da0 100644
+index 59942a3cf6..c80eadf2c0 100644
 --- a/build/config/compiler/BUILD.gn
 +++ b/build/config/compiler/BUILD.gn
-@@ -373,14 +373,23 @@ config("compiler") {
+@@ -373,12 +373,18 @@ config("compiler") {
        # On Aarch64, SCS requires the x18 register to be unused because it will hold
        # a pointer to the shadow stack. For Android we know that Clang doesn't use
        # x18 by default. On other OSs adding "-ffixed-x18" might be required.
@@ -14,21 +14,16 @@ index 59942a3cf6..8275023da0 100644
 -        "-fno-stack-protector",
 +        "-fstack-protector-strong",
        ]
-+      rs_scs_params = [ "-Zsanitize=shadow-call-stack" ]
 +
 +      # fixed-x18 may be required for ShadowCallStack
 +      if (is_linux) {
 +        scs_paramaters += [ "-ffixed-x18" ]
-+        rs_scs_params += [ "-Zfixed-x18" ]
 +      }
 +
        cflags += scs_parameters
        ldflags += scs_parameters
-+      rustflags += rs_scs_params
      } else {
-       if (is_apple) {
-         # The strong variant of the stack protector significantly increases
-@@ -400,6 +409,11 @@ config("compiler") {
+@@ -400,6 +406,11 @@ config("compiler") {
        }
      }
  
@@ -40,7 +35,7 @@ index 59942a3cf6..8275023da0 100644
      if (use_lld) {
        ldflags += [ "-fuse-ld=lld" ]
        if (lld_path != "") {
-@@ -2282,7 +2296,7 @@ config("chromium_code") {
+@@ -2282,7 +2293,7 @@ config("chromium_code") {
        # Non-chromium code is not guaranteed to compile cleanly with
        # _FORTIFY_SOURCE. Also, fortified build may fail when optimizations are
        # disabled, so only do that for Release build.
@@ -49,7 +44,7 @@ index 59942a3cf6..8275023da0 100644
  
        # ChromeOS's toolchain supports a high-quality _FORTIFY_SOURCE=3
        # implementation with a few custom glibc patches. Use that if it's
-@@ -3363,8 +3377,14 @@ buildflag_header("compiler_buildflags") {
+@@ -3363,8 +3374,14 @@ buildflag_header("compiler_buildflags") {
  }
  
  config("cet_shadow_stack") {
@@ -88,22 +83,3 @@ index 131bb71d1d..b584e8d547 100644
      }
    }
  }
-diff --git a/build/config/sanitizers/BUILD.gn b/build/config/sanitizers/BUILD.gn
-index 66b993426a..8cc5ffe7b6 100644
---- a/build/config/sanitizers/BUILD.gn
-+++ b/build/config/sanitizers/BUILD.gn
-@@ -374,10 +374,10 @@ config("cfi_flags") {
- 
-     if (use_cfi_icall) {
-       cflags += [ "-fsanitize=cfi-icall" ]
--      # TODO(crbug.com/40266913): Add cflags += [
--      # "-fsanitize-cfi-icall-experimental-normalize-integers" ]
--      # TODO(crbug.com/40266913): Add rustflags += [
--      # "-Zsanitizer-cfi-normalize-integers" ].
-+      if (toolchain_supports_rust_thin_lto) {
-+        cflags += [ "-fsanitize-cfi-icall-experimental-normalize-integers" ]
-+        rustflags += [ "-Zsanitizer=cfi", "-Zsanitizer-cfi-normalize-integers" ]
-+      }
-     }
- 
-     if (use_cfi_diag) {
