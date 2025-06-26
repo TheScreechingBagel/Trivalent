@@ -1,14 +1,15 @@
 diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
-index 3ebb85bbe3..04646784df 100644
+index e856d9cf62..c2fd27d0ca 100644
 --- a/chrome/browser/chrome_content_browser_client.cc
 +++ b/chrome/browser/chrome_content_browser_client.cc
-@@ -8017,9 +8017,10 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
+@@ -7590,10 +7590,10 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
                                           nullptr) == CONTENT_SETTING_BLOCK;
    }
  
 -  // Only disable JIT for web schemes.
--  if (!site_url.SchemeIsHTTPOrHTTPS())
+-  if (!site_url.SchemeIsHTTPOrHTTPS()) {
 -    return false;
+-  }
 +  // Disable JIT & WASM for non-web schemes.
 +  if (!site_url.SchemeIsHTTPOrHTTPS() && !site_url.SchemeIsFile()
 +      && !site_url.SchemeIs("chrome-extension"))
@@ -16,7 +17,7 @@ index 3ebb85bbe3..04646784df 100644
  
    return (map && map->GetContentSetting(site_url, site_url,
                                          ContentSettingsType::JAVASCRIPT_JIT) ==
-@@ -8029,13 +8030,6 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
+@@ -7603,13 +7603,6 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
  bool ChromeContentBrowserClient::AreV8OptimizationsDisabledForSite(
      content::BrowserContext* browser_context,
      const GURL& site_url) {
@@ -30,7 +31,7 @@ index 3ebb85bbe3..04646784df 100644
    Profile* profile = Profile::FromBrowserContext(browser_context);
    auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
    // Special case to determine if any policy is set.
-@@ -8045,6 +8039,11 @@ bool ChromeContentBrowserClient::AreV8OptimizationsDisabledForSite(
+@@ -7619,6 +7612,11 @@ bool ChromeContentBrowserClient::AreV8OptimizationsDisabledForSite(
             CONTENT_SETTING_BLOCK;
    }
  
@@ -43,10 +44,10 @@ index 3ebb85bbe3..04646784df 100644
            map->GetContentSetting(site_url, site_url,
                                   ContentSettingsType::JAVASCRIPT_OPTIMIZER) ==
 diff --git a/content/browser/renderer_host/render_process_host_impl.cc b/content/browser/renderer_host/render_process_host_impl.cc
-index 73b68c515b..7f1e905295 100644
+index 67cdf0f30f..3e8e47834b 100644
 --- a/content/browser/renderer_host/render_process_host_impl.cc
 +++ b/content/browser/renderer_host/render_process_host_impl.cc
-@@ -3376,7 +3376,11 @@ void RenderProcessHostImpl::AppendRendererCommandLine(
+@@ -3394,7 +3394,11 @@ void RenderProcessHostImpl::AppendRendererCommandLine(
                                      "--jitless");
    } else if (AreV8OptimizationsDisabled()) {
      command_line->AppendSwitchASCII(blink::switches::kJavaScriptFlags,
@@ -55,15 +56,15 @@ index 73b68c515b..7f1e905295 100644
 +                                    "--jitless,--wasm_jitless");
 +#else
 +                                    "--jitless");
-+#endif
++#endif // V8_ENABLE_DRUMBRAKE
    }
  
    if (DisallowV8FeatureFlagOverrides()) {
 diff --git a/content/public/common/content_features.cc b/content/public/common/content_features.cc
-index 2d95d5e1df911..e7a29a6687a07 100644
+index 07c7bd2c66..41f905a309 100644
 --- a/content/public/common/content_features.cc
 +++ b/content/public/common/content_features.cc
-@@ -1067,7 +1067,7 @@ BASE_FEATURE(kDisableProcessReuse,
+@@ -1119,7 +1119,7 @@ BASE_FEATURE(kDisableProcessReuse,
  // This feature is only consulted in site-per-process mode.
  BASE_FEATURE(kSpareRendererForSitePerProcess,
               "SpareRendererForSitePerProcess",
