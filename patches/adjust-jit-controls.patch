@@ -1,5 +1,5 @@
 diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
-index e856d9cf62..c2fd27d0ca 100644
+index e856d9cf62..fb580fec91 100644
 --- a/chrome/browser/chrome_content_browser_client.cc
 +++ b/chrome/browser/chrome_content_browser_client.cc
 @@ -7590,10 +7590,10 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
@@ -32,10 +32,18 @@ index e856d9cf62..c2fd27d0ca 100644
    auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
    // Special case to determine if any policy is set.
 diff --git a/content/browser/renderer_host/render_process_host_impl.cc b/content/browser/renderer_host/render_process_host_impl.cc
-index 67cdf0f30f..3e8e47834b 100644
+index 67cdf0f30f..3fa91706cd 100644
 --- a/content/browser/renderer_host/render_process_host_impl.cc
 +++ b/content/browser/renderer_host/render_process_host_impl.cc
-@@ -3394,7 +3394,11 @@ void RenderProcessHostImpl::AppendRendererCommandLine(
+@@ -3389,12 +3389,18 @@ void RenderProcessHostImpl::AppendRendererCommandLine(
+     command_line->AppendSwitch(switches::kNoZygote);
+   }
+ 
+-  if (IsJitDisabled()) {
++  if (IsJitDisabled() || (AreVOptimizationsDisabled() &&
++                      !base::CommandLine::
++                           ForCurrentProcess()->HasSwitch("enable-wasm")) {
+     command_line->AppendSwitchASCII(blink::switches::kJavaScriptFlags,
                                      "--jitless");
    } else if (AreV8OptimizationsDisabled()) {
      command_line->AppendSwitchASCII(blink::switches::kJavaScriptFlags,
