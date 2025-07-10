@@ -168,7 +168,6 @@ Requires: nss-mdns%{_isa}
 Requires: libcanberra-gtk3%{_isa}
 Requires: u2f-hidraw-policy
 Requires: bubblewrap
-Requires: %{chromium_name}-common%{_isa} = %{version}-%{release}
 
 ExclusiveArch: x86_64 aarch64
 
