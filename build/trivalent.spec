@@ -568,11 +568,9 @@ fi
 %{chromium_path}/chrome_crashpad_handler
 %{chromium_path}/icudtl.dat
 %{chromium_path}/v8_context_snapshot.bin
-%{chromium_path}/libvulkan.so.*
+%{chromium_path}/libvulkan.so.1
 %{chromium_path}/libEGL.so
 %{chromium_path}/libGLESv2.so
-%{chromium_path}/chrome_*_percent.pak
-%{chromium_path}/resources.pak
 # Config
 %config(noreplace) %{_sysconfdir}/%{chromium_name}/%{chromium_name}.conf
 %config %{_sysconfdir}/%{chromium_name}/master_preferences
@@ -587,6 +585,9 @@ fi
 %{_datadir}/icons/hicolor/48x48/apps/%{chromium_name}.png
 %{_datadir}/icons/hicolor/24x24/apps/%{chromium_name}.png
 # Locale and Language
+%{chromium_path}/resources.pak
+%{chromium_path}/chrome_100_percent.pak
+%{chromium_path}/chrome_200_percent.pak
 %dir %{chromium_path}/locales/
 # Chromium _ALWAYS_ needs en-US.pak as a fallback
 %{chromium_path}/locales/en-US.pak
