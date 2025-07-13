@@ -1,8 +1,13 @@
 diff --git a/chrome/browser/chrome_content_browser_client.cc b/chrome/browser/chrome_content_browser_client.cc
-index e856d9cf62..fb580fec91 100644
+index e856d9cf62..50e5b11ce3 100644
 --- a/chrome/browser/chrome_content_browser_client.cc
 +++ b/chrome/browser/chrome_content_browser_client.cc
-@@ -7590,10 +7590,10 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
+@@ -7587,29 +7587,27 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
+   // Special case to determine if any policy is set.
+   if (map && site_url.is_empty()) {
+     return map->GetDefaultContentSetting(ContentSettingsType::JAVASCRIPT_JIT,
++                                         nullptr) == CONTENT_SETTING_BLOCK ||
++           map->GetDefaultContentSetting(ContentSettingsType::JAVASCRIPT,
                                           nullptr) == CONTENT_SETTING_BLOCK;
    }
  
@@ -15,9 +20,16 @@ index e856d9cf62..fb580fec91 100644
 +      && !site_url.SchemeIs("chrome-extension"))
 +    return true;
  
-   return (map && map->GetContentSetting(site_url, site_url,
+-  return (map && map->GetContentSetting(site_url, site_url,
++  return (map && (map->GetContentSetting(site_url, site_url,
                                          ContentSettingsType::JAVASCRIPT_JIT) ==
-@@ -7603,13 +7603,6 @@ bool ChromeContentBrowserClient::IsJitDisabledForSite(
+-                     CONTENT_SETTING_BLOCK);
++                     CONTENT_SETTING_BLOCK) ||
++                  map->GetContentSetting(site_url, site_url,
++                                        ContentSettingsType::JAVASCRIPT) ==
++                     CONTENT_SETTING_BLOCK));
+ }
+ 
  bool ChromeContentBrowserClient::AreV8OptimizationsDisabledForSite(
      content::BrowserContext* browser_context,
      const GURL& site_url) {
@@ -32,7 +44,7 @@ index e856d9cf62..fb580fec91 100644
    auto* map = HostContentSettingsMapFactory::GetForProfile(profile);
    // Special case to determine if any policy is set.
 diff --git a/content/browser/renderer_host/render_process_host_impl.cc b/content/browser/renderer_host/render_process_host_impl.cc
-index 67cdf0f30f..3fa91706cd 100644
+index 67cdf0f30f..c5d6630a3f 100644
 --- a/content/browser/renderer_host/render_process_host_impl.cc
 +++ b/content/browser/renderer_host/render_process_host_impl.cc
 @@ -3389,12 +3389,18 @@ void RenderProcessHostImpl::AppendRendererCommandLine(
