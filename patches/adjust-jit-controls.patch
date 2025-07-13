@@ -24,10 +24,10 @@ index e856d9cf62..50e5b11ce3 100644
 +  return (map && (map->GetContentSetting(site_url, site_url,
                                          ContentSettingsType::JAVASCRIPT_JIT) ==
 -                     CONTENT_SETTING_BLOCK);
-+                     CONTENT_SETTING_BLOCK) ||
++                     CONTENT_SETTING_BLOCK ||
 +                  map->GetContentSetting(site_url, site_url,
 +                                        ContentSettingsType::JAVASCRIPT) ==
-+                     CONTENT_SETTING_BLOCK));
++                     CONTENT_SETTING_BLOCK);
  }
  
  bool ChromeContentBrowserClient::AreV8OptimizationsDisabledForSite(
