@@ -68,7 +68,7 @@ index 1f5aff963f2a4..b7a1a5ea17f76 100644
        .bullet-line {
          align-items: center;
          display: flex;
-@@ -298,6 +302,41 @@
+@@ -298,6 +302,43 @@
          sub-label="$i18n{manageCertificatesDescription}"
          on-click="onManageCertificatesClick_" external>
      </cr-link-row>
@@ -81,8 +81,9 @@ index 1f5aff963f2a4..b7a1a5ea17f76 100644
 +      </settings-toggle-button>
 +      <settings-toggle-button class="cr-row"
 +        pref="{{prefs.disable_3d_apis}}"
-+        label="Disable 3D APIs"
-+        sub-label="Disable features like WebGL and Pepper 3D">
++        disabled="[[!prefs.disable_3d_apis]]"
++        label="Enable 3D APIs"
++        sub-label="Toggle features like WebGL and Pepper 3D">
 +      </settings-toggle-button>
 +      <div class="cr-row">
 +        <div id="webrtcLabel" class="flex cr-padded-text" aria-hidden="true">
@@ -103,7 +104,8 @@ index 1f5aff963f2a4..b7a1a5ea17f76 100644
 +</if>
 +      <settings-toggle-button class="cr-row"
 +        pref="{{prefs.extensions.disabled}}"
-+        label="Disable Extensions"
++        disabled="[[!prefs.extensions.disabled]]"
++        label="Extensions Support"
 +        sub-label="Changes to this setting requires a restart">
 +      </settings-toggle-button>
 +    </div>
