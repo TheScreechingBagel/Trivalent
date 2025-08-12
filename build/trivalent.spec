@@ -20,8 +20,9 @@
 %global __provides_exclude_from ^(%{chromium_path}/.*\\.so|%{chromium_path}/.*\\.so.*)$
 %global __requires_exclude ^(%{chromium_path}/.*\\.so|%{chromium_path}/.*\\.so.*)$
 
-# Build configuration
-%global use_ffmpeg_free 0
+### Build configuration ###
+# This allows for hardware accelerated video and WebDRM (for things like Netflix)
+%global enable_proprietary_codecs 1
 
 Source69: chromium-version.txt
 
@@ -431,7 +432,7 @@ CHROMIUM_GN_DEFINES=''
 CHROMIUM_GN_DEFINES+=' target_cpu="arm64"'
 CHROMIUM_GN_DEFINES+=' use_v4l2_codec=true'
 %endif
-%if ! %{use_ffmpeg_free}
+%if %{enable_proprietary_codecs}
 CHROMIUM_GN_DEFINES+=' ffmpeg_branding="Chrome" proprietary_codecs=true enable_widevine=true'
 %endif
 CHROMIUM_GN_DEFINES+=' system_libdir="%{_lib}"'
