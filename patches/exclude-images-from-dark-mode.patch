@@ -28,7 +28,7 @@ index e59a86e42a..c154d0b366 100644
                          &kForceWebContentsDarkMode,
                          "image_behavior",
 -                        ForceDarkImageBehavior::kUseBlinkSettings,
-+                        ForceDarkImageBehavior::kInvertSelectively,
++                        ForceDarkImageBehavior::kInvertNone,
                          &forcedark_image_behavior_options);
  
  // Do not invert text lighter than this.
