@@ -500,7 +500,7 @@ GN_PATH="$(which gn)"
 %else
 GN_PATH="buildtools/linux64/gn"
 %endif
-ln -sf $GN_PATH %{chromebuilddir}/
+cp -a $GN_PATH %{chromebuilddir}/
 
 %{chromebuilddir}/gn --script-executable=%{__python3} gen --args="$CHROMIUM_GN_DEFINES" %{chromebuilddir}
 
