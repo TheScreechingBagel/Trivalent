@@ -22,6 +22,7 @@
 %global enable_proprietary_codecs 1
 
 # The system toolchain is more out-of-date compared to chromium's
+# It also loses out on some performance optimisations that chromium's toolchain can provide (like siso)
 # This is needed for non-x64 arches since the chromium toolchain doesn't support anything but x64
 %ifarch x86_64
 %global use_system_toolchain 0
