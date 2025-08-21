@@ -14,9 +14,20 @@
 %global __provides_exclude_from ^(%{chromium_path}/.*\\.so|%{chromium_path}/.*\\.so.*)$
 %global __requires_exclude ^(%{chromium_path}/.*\\.so|%{chromium_path}/.*\\.so.*)$
 
-### Build configuration ###
+
+### Build configurations ###
+
 # This allows for hardware accelerated video and WebDRM (for things like Netflix)
+# But, disabling this makes the browser fully open source
 %global enable_proprietary_codecs 1
+
+# The system toolchain is more out-of-date compared to chromium's
+# This is needed for non-x64 arches since the chromium toolchain doesn't support anything but x64
+%ifarch x86_64
+%global use_system_toolchain 0
+%else
+%global use_system_toolchain 1
+%endif
 
 Source69: chromium-version.txt
 
@@ -160,6 +171,21 @@ BuildRequires:	systemd
 BuildRequires: libevdev-devel
 # One of the python scripts invokes git to look for a hash. So helpful.
 BuildRequires:	git-core
+
+%if %{use_system_toolchain}
+BuildRequires: clang
+BuildRequires: clang-tools-extra
+BuildRequires: llvm
+BuildRequires: lld
+BuildRequires: rustc
+BuildRequires: bindgen-cli
+BuildRequires: ninja-build
+BuildRequires: gn
+BuildRequires: nodejs
+%global build_target() \
+	export NINJA_STATUS="[%2:%f/%t] " ; \
+	ninja -j %{numjobs} -C '%1' '%2'
+%endif
 
 Requires: nss%{_isa} >= 3.26
 Requires: nss-mdns%{_isa}
@@ -407,18 +433,22 @@ export RUSTFLAGS
 
 export RUSTC_BOOTSTRAP=1
 
+%if ! %{use_system_toolchain}
 declare -r SOURCE_DIR="$(pwd)/third_party"
-
 # add internal clang to PATH for build
 PATH="$PATH:$SOURCE_DIR/llvm-build/Release+Asserts/bin"
-
 # add internal rust utils to PATH for build
 PATH="$PATH:$SOURCE_DIR/rust-toolchain/bin"
-
 # add internal nodejs to PATH for build
 PATH="$PATH:$SOURCE_DIR/node/linux/node-linux-x64/bin"
-
 export PATH
+%else
+rustc_version="$(rustc --version)"
+rust_bindgen_root="$(which bindgen | sed 's#/s\?bin/.*##')"
+rust_sysroot_absolute="$(rustc --print sysroot)"
+clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
+clang_base_path="$(PATH=/usr/bin:/usr/sbin which clang | sed 's#/bin/.*##')"
+%endif
 
 CHROMIUM_GN_DEFINES=''
 %ifarch aarch64
@@ -427,6 +457,16 @@ CHROMIUM_GN_DEFINES+=' use_v4l2_codec=true'
 %endif
 %if %{enable_proprietary_codecs}
 CHROMIUM_GN_DEFINES+=' ffmpeg_branding="Chrome" proprietary_codecs=true enable_widevine=true'
+%endif
+%if ! %{use_system_toolchain}
+CHROMIUM_GN_DEFINES+=' custom_toolchain="//build/toolchain/linux/unbundle:default"'
+CHROMIUM_GN_DEFINES+=' host_toolchain="//build/toolchain/linux/unbundle:default"'
+CHROMIUM_GN_DEFINES+=' clang_base_path="$clang_base_path"'
+CHROMIUM_GN_DEFINES+=' clang_version=$clang_version'
+CHROMIUM_GN_DEFINES+=' clang_use_chrome_plugins=false'
+CHROMIUM_GN_DEFINES+=' rust_sysroot_absolute="$rust_sysroot_absolute"'
+CHROMIUM_GN_DEFINES+=' rust_bindgen_root="$rust_bindgen_root"'
+CHROMIUM_GN_DEFINES+=' rustc_version="$rustc_version"'
 %endif
 CHROMIUM_GN_DEFINES+=' system_libdir="%{_lib}"'
 CHROMIUM_GN_DEFINES+=' is_official_build=true'
@@ -439,7 +479,6 @@ CHROMIUM_GN_DEFINES+=' target_os="linux"'
 CHROMIUM_GN_DEFINES+=' current_os="linux"'
 CHROMIUM_GN_DEFINES+=' treat_warnings_as_errors=false'
 CHROMIUM_GN_DEFINES+=' enable_vr=false'
-CHROMIUM_GN_DEFINES+=' enable_openxr=false'
 CHROMIUM_GN_DEFINES+=' enable_swiftshader=false' # build without swiftshader (it is actively being deprecated anyway)
 CHROMIUM_GN_DEFINES+=' build_dawn_tests=false enable_perfetto_unittests=false'
 CHROMIUM_GN_DEFINES+=' disable_fieldtrial_testing_config=true'
@@ -460,11 +499,22 @@ if python3 -c 'import google ; print google.__path__' 2> /dev/null ; then \
     exit 1 ; \
 fi
 
-mkdir -p %{chromebuilddir} && cp -a buildtools/linux64/gn %{chromebuilddir}/
+mkdir -p %{chromebuilddir}
+
+%if %{use_system_toolchain}
+GN_PATH="$(which gn)"
+%else
+GN_PATH="buildtools/linux64/gn"
+%endif
+ln -sf $GN_PATH %{chromebuilddir}/
 
 %{chromebuilddir}/gn --script-executable=%{__python3} gen --args="$CHROMIUM_GN_DEFINES" %{chromebuilddir}
 
+%if %{use_system_toolchain}
+build_target %{chromebuilddir} chrome
+%else
 %{__python3} $SOURCE_DIR/depot_tools/autoninja.py -C %{chromebuilddir} chrome
+%endif
 
 %install
 rm -rf %{buildroot}
