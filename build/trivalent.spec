@@ -443,6 +443,10 @@ PATH="$PATH:$SOURCE_DIR/rust-toolchain/bin"
 # add internal nodejs to PATH for build
 PATH="$PATH:$SOURCE_DIR/node/linux/node-linux-x64/bin"
 export PATH
+%else
+v_clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
+v_clang_base_path="$(PATH=/usr/bin:/usr/sbin which clang | sed 's#/bin/.*##')"
+v_rust_bindgen_root="$(which bindgen | sed 's#/s\?bin/.*##')"
 %endif
 
 CHROMIUM_GN_DEFINES=''
@@ -456,11 +460,11 @@ CHROMIUM_GN_DEFINES+=' ffmpeg_branding="Chrome" proprietary_codecs=true enable_w
 %if %{use_system_toolchain}
 CHROMIUM_GN_DEFINES+=' custom_toolchain="//build/toolchain/linux/unbundle:default"'
 CHROMIUM_GN_DEFINES+=' host_toolchain="//build/toolchain/linux/unbundle:default"'
-CHROMIUM_GN_DEFINES+=' clang_base_path="$(PATH=/usr/bin:/usr/sbin which clang | sed 's#/bin/.*##')"'
-CHROMIUM_GN_DEFINES+=' clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"'
+CHROMIUM_GN_DEFINES+=' clang_base_path="$v_clang_base_path"'
+CHROMIUM_GN_DEFINES+=' clang_version="$v_clang_version"'
 CHROMIUM_GN_DEFINES+=' clang_use_chrome_plugins=false'
 CHROMIUM_GN_DEFINES+=' rust_sysroot_absolute="$(rustc --print sysroot)"'
-CHROMIUM_GN_DEFINES+=' rust_bindgen_root="$(which bindgen | sed 's#/s\?bin/.*##')"'
+CHROMIUM_GN_DEFINES+=' rust_bindgen_root="$v_rust_bindgen_root"'
 CHROMIUM_GN_DEFINES+=' rustc_version="$(rustc --version)"'
 %endif
 CHROMIUM_GN_DEFINES+=' system_libdir="%{_lib}"'
