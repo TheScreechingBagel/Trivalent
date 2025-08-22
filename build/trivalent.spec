@@ -435,9 +435,9 @@ export RUSTFLAGS
 export RUSTC_BOOTSTRAP=1
 
 %if %{use_system_toolchain}
-v_clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
-v_clang_base_path="$(PATH=/usr/bin:/usr/sbin which clang | sed 's#/bin/.*##')"
-v_rust_bindgen_root="$(which bindgen | sed 's#/s\?bin/.*##')"
+declare -r clang_version="$(clang --version | sed -n 's/clang version //p' | cut -d. -f1)"
+declare -r clang_base_path="$(PATH=/usr/bin:/usr/sbin which clang | sed 's#/bin/.*##')"
+declare -r rust_bindgen_root="$(which bindgen | sed 's#/s\?bin/.*##')"
 %else
 declare -r SOURCE_DIR="$(pwd)/third_party"
 # add internal clang to PATH for build
@@ -460,11 +460,11 @@ CHROMIUM_GN_DEFINES+=' ffmpeg_branding="Chrome" proprietary_codecs=true enable_w
 %if %{use_system_toolchain}
 CHROMIUM_GN_DEFINES+=" custom_toolchain=\"//build/toolchain/linux/unbundle:default\""
 CHROMIUM_GN_DEFINES+=" host_toolchain=\"//build/toolchain/linux/unbundle:default\""
-CHROMIUM_GN_DEFINES+=" clang_base_path=\"$v_clang_base_path\""
-CHROMIUM_GN_DEFINES+=" clang_version=\"$v_clang_version\""
+CHROMIUM_GN_DEFINES+=" clang_base_path=\"$clang_base_path\""
+CHROMIUM_GN_DEFINES+=" clang_version=\"$clang_version\""
 CHROMIUM_GN_DEFINES+=" clang_use_chrome_plugins=false"
 CHROMIUM_GN_DEFINES+=" rust_sysroot_absolute=\"$(rustc --print sysroot)\""
-CHROMIUM_GN_DEFINES+=" rust_bindgen_root=\"$v_rust_bindgen_root\""
+CHROMIUM_GN_DEFINES+=" rust_bindgen_root=\"$rust_bindgen_root\""
 CHROMIUM_GN_DEFINES+=" rustc_version=\"$(rustc --version)\""
 %endif
 CHROMIUM_GN_DEFINES+=' system_libdir="%{_lib}"'
@@ -510,7 +510,7 @@ cp -a $GN_PATH %{chromebuilddir}/
 %{chromebuilddir}/gn --script-executable=%{__python3} gen --args="$CHROMIUM_GN_DEFINES" %{chromebuilddir}
 
 %if %{use_system_toolchain}
-build_target %{chromebuilddir} chrome
+%build_target %{chromebuilddir} chrome
 %else
 %{__python3} $SOURCE_DIR/depot_tools/autoninja.py -C %{chromebuilddir} chrome
 %endif
