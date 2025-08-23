@@ -18,7 +18,8 @@
 ### Build configurations ###
 
 # This allows for hardware accelerated video and WebDRM (for things like Netflix)
-# But, disabling this makes the browser fully open source
+# But, disabling this builds the browser without support for patent-encumbered codecs
+# And prevents downloading proprietary libraries at runtime (Widevine)
 %global enable_proprietary_codecs 1
 
 # The system toolchain is more out-of-date compared to chromium's
