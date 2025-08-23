@@ -72,13 +72,11 @@ Source20: %{chromium_name}256.png
     if posix.getenv("HOME") == "/builddir" then
         fpatches = rpm.glob('/builddir/build/SOURCES/fedora-*.patch')
         vpatches = rpm.glob('/builddir/build/SOURCES/vanadium-*.patch')
-        hpatches = rpm.glob('/builddir/build/SOURCES/'..macros['chromium_name']..'-*.patch')
-        tpatches = rpm.glob('/builddir/build/SOURCES/toolchain-*.patch')
+        tpatches = rpm.glob('/builddir/build/SOURCES/'..macros['chromium_name']..'-*.patch')
     else
         fpatches = rpm.glob(macros['_sourcedir']..'/fedora-*.patch')
         vpatches = rpm.glob(macros['_sourcedir']..'/vanadium-*.patch')
-        hpatches = rpm.glob(macros['_sourcedir']..'/'..macros['chromium_name']..'-*.patch')
-        tpatches = rpm.glob(macros['_sourcedir']..'/toolchain-*.patch')
+        tpatches = rpm.glob(macros['_sourcedir']..'/'..macros['chromium_name']..'-*.patch')
     end
 
     local count = 1000
@@ -105,30 +103,18 @@ Source20: %{chromium_name}256.png
 
     count = 3000
     printPatch = ""
-    for p in ipairs(hpatches) do
-        os.execute("echo 'Patching in "..hpatches[p].."'")
+    for p in ipairs(tpatches) do
+        os.execute("echo 'Patching in "..tpatches[p].."'")
         printPatch = "Patch"..count..": "..macros['chromium_name'].."-"..count..".patch"
         rpm.execute("echo", printPatch)
         print(printPatch.."\n")
         count = count + 1
     end
-    rpm.define("_hardeningPatchCount "..count-1)
-
-	count = 4000
-    printPatch = ""
-    for p in ipairs(tpatches) do
-        os.execute("echo 'Patching in "..tpatches[p].."'")
-        printPatch = "Patch"..count..": toolchain-"..count..".patch"
-        rpm.execute("echo", printPatch)
-        print(printPatch.."\n")
-        count = count + 1
-    end
-    rpm.define("_toolchainPatchCount "..count-1)
+    rpm.define("_trivalentPatchCount "..count-1)
 
     os.execute("echo 'Autopatch F: "..macros['_fedoraPatchCount'].."'")
     os.execute("echo 'Autopatch V: "..macros['_vanadiumPatchCount'].."'")
-    os.execute("echo 'Autopatch H: "..macros['_hardeningPatchCount'].."'")
-    os.execute("echo 'Autopatch T: "..macros['_toolchainPatchCount'].."'")
+    os.execute("echo 'Autopatch T: "..macros['_trivalentPatchCount'].."'")
 }
 
 BuildRequires: golang-github-evanw-esbuild
@@ -372,12 +358,14 @@ Qt6 UI for %{chromium_name_branding}.
 %setup -q -n chromium-%{version}
 
 ### Patches ###
-%autopatch -p1 -m 1000 -M %{_fedoraPatchCount}
-%autopatch -p1 -m 2000 -M %{_vanadiumPatchCount}
-%autopatch -p1 -m 3000 -M %{_hardeningPatchCount}
 %if %{use_system_toolchain}
-%autopatch -p1 -m 4000 -M %{_toolchainPatchCount}
+# License: MIT
+%autopatch -p1 -m 1000 -M %{_fedoraPatchCount}
 %endif
+# License: GPL-2.0-Only
+%autopatch -p1 -m 2000 -M %{_vanadiumPatchCount}
+# License: Apache-2.0
+%autopatch -p1 -m 3000 -M %{_trivalentPatchCount}
 
 ### String Branding ###
 find . -type f \( -iname "*.grd" -o -iname "*.grdp" -o -iname "*.xtb" \) \
